@@ -7,7 +7,7 @@
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: #f0f8ff;
+  background-color: #ffeef0;
   color: #333;
   line-height: 1.6;
   margin: 0;
@@ -31,6 +31,59 @@ header h1 {
   display: inline-block;
 }
 
+/* Footer */
+footer {
+    background-color: #fdd7e4; 
+    color: #333;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+    margin-top: 0px; /* Space between content and footer */
+}
+
+/* Footer links */
+footer a {
+    text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #333;
+}
+
+/* Additional */
+.footer-content p.made-with-love {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #000; 
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start position */
+    transition: opacity 1s ease, transform 1s ease; /* Animation */
+}
+.custom-link {
+    color: #ff6f91; /* Custom color for this link */
+}
+
+.custom-link:hover {
+    color: #ff3b5c; /* Hover effect */
+}
+
+.footer-content p.made-with-love span {
+    color: #ff6f91; /* author name Yoshioka*/
+}
+
+/* Visible state triggered by Intersection Observer */
+.footer-content.p-visible p.made-with-love {
+    opacity: 1; /* Fade in */
+    transform: translateY(0); /* Final position */
+}
+
 /* Navigation styling */
 nav {
   display: flex;
@@ -51,6 +104,10 @@ nav a {
   z-index: 1;
 }
 
+nav a.active {
+  background-color: #ff94a4;
+}
+
 nav a:hover {
   background-color: #ffb6c1;
   color: #fff;
@@ -63,6 +120,7 @@ nav a:hover {
   gap: 30px;
   justify-content: center;
   margin-top: 30px;
+  padding: 30px;
 }
 
 .card {
@@ -118,6 +176,86 @@ nav a:hover {
     transform: scale(1);
   }
 }
+
+/*STYLES 2*/
+.container {
+  padding: 0px 30px;
+}
+
+h2 {
+  color: #333;
+  background-color: ;
+  margin: 30px 0px 20px 0px;
+}
+
+h3 {
+  color: #444;
+  margin: 20px 0px;
+  background-color: ;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+ul {
+  list-style-type: none; 
+  padding: 0;
+}
+
+ul li {
+  margin: 5px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed; /* Ensures content is well-distributed */
+  overflow-x: auto; /* Allows scrolling on smaller screens */
+}
+
+@media screen and (max-width: 768px) {
+  table th,
+  table td {
+    padding: 8px; /* Slightly smaller padding for mobile */
+  }
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #ff6b6b;
+  color: white;
+}
+/*scroll button*/
+.scroll-btn {
+  position: fixed;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  z-index: 1000;
+}
+
+#scroll-up {
+  bottom: 80px;
+  right: 20px;
+}
+
+#scroll-down {
+  bottom: 20px;
+  right: 20px;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

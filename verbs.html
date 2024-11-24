@@ -4,21 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Japanese Verbs and Conjugation</title>
-  <link rel="stylesheet" href="styles1.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1>Understanding Japanese Verbs</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="verbs.html" class="active">Japanese Verbs</a>
-      <a href="grammar.html">Grammar</a>
-      <a href="writing-systems.html">Writing Systems</a>
-      <a href="vocabulary.html">Essential Vocabulary</a>
-    </nav>
+    <a href="index.html"><h1>Understanding Japanese Verbs</h1></a>
   </header>
-
-  <div class="container">
+ 
+ <div class="container">
+   <nav>
+      <a href="index.html" class="active">Home</a>
+      <a href="nouns.html">👘 Nouns</a>
+      <a href="adjectives.html">🍡 Adjectives</a>
+      <a href="sentence-structure.html">📝 Sentence Structure</a>
+      <a href="particles.html">⚡ Particles</a>
+    </nav>
+    
+  <div class="main-container">  
     <!-- Introduction Section -->
     <section class="intro">
       <h2>Introduction to Japanese Verbs</h2>
@@ -110,8 +112,8 @@
           </tr>
           <tr>
             <td>Past</td>
-            <td>kakimashita</td>
-            <td>tabemashita</td>
+            <td>kaita</td>
+            <td>tabeta</td>
             <td>shita</td>
           </tr>
           <tr>
@@ -144,7 +146,8 @@
 
     <!-- Common Verbs Section -->
     <section class="common-verbs">
-      <h2>Commonly Used Verbs</h2>
+      <h2><u>Commonly Used Verbs</u>:</h2>
+      <h2> Transitive Verbs (Directly take a direct object): </h2>
           <ul>
 			  <li><strong>食べる (Taberu) / 食べます (Tabemasu):</strong> To eat</li>
 			  <li><strong>聞く (Kiku) / 聞きます (Kikimasu):</strong> To ask, to listen</li>
@@ -164,16 +167,45 @@
 			  <li><strong>目指す (Mezasu) / 目指します (Mezashimasu):</strong> To aim for</li>
 			  <li><strong>着る (Kiru) / 着ます (Kimasu):</strong> To wear (clothes)</li>
 		 </ul>
+		<h2> Intransitive Verbs (Do not take a direct object): </h2>
+		
+		<ul>
+			  <li><strong>歩く (Aruku):</strong> To walk</li>
+			  <li><strong>死ぬ (Shinu):</strong> To die</li>
+			  <li><strong>起きる (Okiru):</strong> To wake up, to get up</li>
+			  <li><strong>眠る (Nemuru):</strong> To sleep</li>
+			  <li><strong>行く (Iku):</strong> To go</li>
+			  <li><strong>来る (Kuru):</strong> To come</li>
+			  <li><strong>帰る (Kaeru):</strong> To return (home)</li>
+			  <li><strong>走る (Hashiru):</strong> To run</li>
+			  <li><strong>座る (Suwaru):</strong> To sit</li>
+			  <li><strong>立つ (Tatsu):</strong> To stand</li>
+			  <li><strong>入る (Hairu):</strong> To enter</li>
+			  <li><strong>出る (Deru):</strong> To leave, to exit</li>
+			  <li><strong>会う (Au):</strong> To meet</li>
+			  <li><strong>寝る (Neru):</strong> To sleep (polite form)</li>
+			  <li><strong>笑う (Warau):</strong> To laugh</li>
+			  <li><strong>怒る (Okoru):</strong> To get angry</li>
+			  <li><strong>飛ぶ (Tobu):</strong> To fly</li>
+			</ul>
 
 
     </section>
-
+  </div>
   </div> <!-- End of container -->
 
   <footer>
-    <p>&copy; 2024 Learn Japanese Guidebook | All Rights Reserved</p>
-  </footer>
+    <div class="footer-content">
+        <p>© 2024 Nihongo Guidebook | All Rights Reserved</p>
+        <p><a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms of Use</a></p>
+        <p class="made-with-love">Made with ❤ for 🇯🇵️ by <span>Yoshioka</span> </p>
+    </div>
+</footer>
 
-  <script src="script.js"></script>
+<!-- Scroll Buttons -->
+<button id="scroll-up" class="scroll-btn">&#8593;</button>
+<button id="scroll-down" class="scroll-btn">&#8595;</button>
+
+ <script src="script.js"></script>
 </body>
 </html>

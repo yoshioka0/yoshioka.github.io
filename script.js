@@ -11,3 +11,37 @@ document.querySelectorAll('nav a').forEach(anchor => {
     // If it's a link to another page, don't prevent default
   });
 });
+
+
+
+// Select the footer content
+const footer = document.querySelector('.footer-content');
+
+// Create an Intersection Observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      footer.classList.add('p-visible'); // Add class when in view
+    } else {
+      footer.classList.remove('p-visible'); // Optional: Remove class if out of view
+    }
+  });
+});
+
+// Observe the footer content
+observer.observe(footer);
+
+function scrollToPosition(targetPosition) {
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth'
+  });
+}
+
+document.getElementById('scroll-up').addEventListener('click', function () {
+  scrollToPosition(0);
+});
+
+document.getElementById('scroll-down').addEventListener('click', function () {
+  scrollToPosition(document.body.scrollHeight);
+});
