@@ -308,12 +308,36 @@ button.open-dialog:hover {
   border: none;
   padding: 10px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   border-radius: 50%;
   z-index: 1000;
   height: 3rem;
   width: 3rem;
 }
+
+/* push notification button */
+.floating-button {
+    position: fixed;
+    height: 3.5rem;
+   width: 3.5rem;
+    bottom: 50%;
+    left: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+.floating-button:hover {
+    background-color: #45a049; /* Darker Green */
+}
+
 
 #scroll-up {
   bottom: 6rem;
