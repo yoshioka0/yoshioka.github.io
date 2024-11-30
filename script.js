@@ -251,8 +251,10 @@ if (window.location.pathname === '/nihongo/') {
 				    console.error('Turnstile element not found');
 				    return;
 				}
-				const turnstileResponse = turnstileElement.dataset.response;
-				console.log('Turnstile response:', turnstileResponse);
+				    document.addEventListener('turnstile-success', (event) => {
+				    const turnstileResponse = turnstile.getResponse();
+				    console.log('Turnstile success, response:', turnstileResponse);
+					});
 		    }
 		
 		    if (!username) {
