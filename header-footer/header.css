@@ -1,0 +1,182 @@
+/* header.css */
+
+/* Basic reset for margin, padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Header Styling */
+.custom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Left Section: Logo */
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.site-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.site-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.hamburger .bar {
+  width: 25px;
+  height: 4px;
+  background-color: #333;
+  margin: 4px 0;
+}
+
+/* Middle Section: Chat & Notification Buttons */
+.header-center {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-btn, .notification-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.notification-dropdown {
+  display: none;
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notification-dropdown ul {
+  list-style: none;
+}
+
+.notification-dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.notification-dropdown li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Right Section: User Info */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #0073e6;
+  text-transform: capitalize;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.user-icon img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Header styling */
+.heading {
+  display: flex;
+  flex-direction: column;
+  background: #ff94a4;
+  padding: 10px 0;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  animation: float 3s ease-in-out infinite;  
+  z-index: 100;
+}
+
+.heading h1 {
+background: ;
+  font-size: 2.5rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 2px;
+  display: inline-block;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+  .user-name {
+  	display:none;	
+}
+.site-name {
+  font-size: 1.2rem;
+  }
+  .heading h1 {
+    font-size: 1.8rem;
+  }
+  
+}
+
+/* For when the hamburger menu is active */
+.hamburger.active {
+  display: flex;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

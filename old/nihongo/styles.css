@@ -1,0 +1,377 @@
+/* Reset and basic styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure the page uses the full height */
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #ffeef0;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header styling */
+header {
+  background-color: #ff94a4;
+  padding: 20px 0;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  animation: float 3s ease-in-out infinite;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 2px;
+  display: inline-block;
+}
+
+/* Footer */
+footer {
+    background-color: #fdd7e4; 
+    color: #333;
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 14px;
+    border-top: 1px solid #ddd;
+    margin-top: 0px; /* Space between content and footer */
+}
+
+/* Footer links */
+footer a {
+    text-decoration: none;
+    color: #555;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #333;
+}
+
+/* Additional */
+.footer-content p.made-with-love {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #000; 
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    opacity: 0; /* Initially hidden */
+    transform: translateY(20px); /* Start position */
+    transition: opacity 1s ease, transform 1s ease; /* Animation */
+}
+.custom-link {
+    color: #ff6f91; /* Custom color for this link */
+}
+
+.custom-link:hover {
+    color: #ff3b5c; /* Hover effect */
+}
+
+.footer-content p.made-with-love span {
+    color: #ff6f91; /* author name Yoshioka*/
+}
+
+.footer-icon {
+    width: 20px;  /* Set the desired size */
+    height: 20px;
+    vertical-align: middle;  /* Align with text */
+    margin-left: 5px;  /* Space between text and icon */
+}
+
+/* Visible state triggered by Intersection Observer */
+.footer-content.p-visible p.made-with-love {
+    opacity: 1; /* Fade in */
+    transform: translateY(0); /* Final position */
+}
+
+/* Navigation styling */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+nav a {
+  font-size: 1.2rem;
+  color: #333;
+  text-decoration: none;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  animation: pop-in 1s ease-out;
+  z-index: 1;
+}
+
+nav a.active {
+  background-color: #ff94a4;
+}
+
+nav a:hover {
+  background-color: #ffb6c1;
+  color: #fff;
+}
+
+/* Main content area */
+.main-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 30px;
+  padding: 30px;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s;
+  animation: float 5s ease-in-out infinite;
+  display: block; /* Makes the card a block element, so it behaves like a link */
+  text-decoration: none; /* Remove the default underline of anchor tags */
+  color: #333; /* Ensure the text color is readable */
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #ff6347;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #777;
+}
+
+/* Animation for floating effect */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Pop-in effect for links */
+@keyframes pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/*STYLES 2*/
+.container {
+  padding: 0px 30px;
+  flex: 1;
+}
+.main-container {
+  padding: 20px 20px;
+}
+
+h2 {
+  color: #333;
+  background-color: ;
+  margin: 30px 0px 20px 0px;
+}
+
+h3 {
+  color: #444;
+  margin: 20px 0px;
+  background-color: ;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+ul {
+  list-style-type: none; 
+  padding: 0;
+}
+
+ul li {
+  margin: 5px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed; /* Ensures content is well-distributed */
+  overflow-x: auto; /* Allows scrolling on smaller screens */
+}
+
+@media screen and (max-width: 768px) {
+  table th,
+  table td {
+    padding: 8px; /* Slightly smaller padding for mobile */
+  }
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+/* Button for opening dialog */
+button.open-dialog {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+button.open-dialog:hover {
+    background-color: #45a049;
+}
+
+/* Dialog box styling */
+.dialog {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.dialog-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/*scroll button*/
+.scroll-btn {
+  position: fixed;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 50%;
+  z-index: 1000;
+  height: 3rem;
+  width: 3rem;
+}
+
+/* push notification button */
+.floating-button {
+    position: fixed;
+    height: 3.5rem;
+   width: 3.5rem;
+    bottom: 50%;
+    left: 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    display: none; /* Hidden by default */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+.floating-button:hover {
+    background-color: #45a049; /* Darker Green */
+}
+
+
+#scroll-up {
+  bottom: 6rem;
+  right: 20px;
+}
+
+#scroll-down {
+  bottom: 2rem;
+  right: 20px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .main-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  nav {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+   footer {
+        font-size: 12px;
+        padding: 15px 5px;
+    }
+}

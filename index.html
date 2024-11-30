@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Japanese Learning Guidebook</title>
+  <meta name="description" content="Learn Japanese through a comprehensive guide by Yoshioka, covering writing systems, grammar, essential vocabulary, cultural insights, and practical tips for beginners. A user-friendly resource for mastering the language step by step.">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="manifest" href="favicon/site.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="header-footer/header.css">
+   <script src="/nihongo/auth-v2.js" defer></script>
+  <script src="/nihongo/config.js"></script>
+</head>
+<body>
+	 <!-- Noscript message: if JavaScript is disabled, redirect user -->
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=/nihongo/js-disabled.html" />
+  </noscript>
+	
+	<!-- Modal for user creation -->
+  <div id="signup-modal" class="modal">
+    <div class="modal-content">
+      <h2>Create a userID</h2>
+	   <form id="signup-form">
+		  <input type="text" id="signup-username" placeholder="Enter username" required>
+		  <input type="password" id="signup-password" placeholder="Enter password" required>
+		
+		  <!-- Cloudflare Turnstile -->
+		  <div class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX"></div>
+		
+		  <button type="submit">Create User</button> <br> <br>
+		  <p>Already have an account? <a><span id="login-here" class="login-txt">Login Here</span></a></p>
+		</form>
+		<p id="signupErrorMessage" class="error-message" style="color: red;"></p>
+    </div>
+  </div>
+  
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <h2>Login</h2>
+	   	<form id="login-form">
+			  <input type="text" id="login-username" placeholder="Enter username" required>
+			  <input type="password" id="login-password" placeholder="Enter password" required>
+			
+			  <!-- Cloudflare Turnstile -->
+			  <div class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX"></div>
+			
+			  <button type="submit">Login</button> <br> <br>
+			  <p>Don't have an account? <a><span id="signup-here" class="signup-txt">Create one Here</span></a></p>
+			</form>
+			<p id="loginErrorMessage" class="error-message" style="color: red;"></p>
+    </div>
+  </div>
+
+
+<header class="custom-header">
+  <!-- Left Section: Site Name and Icon -->
+  <div class="header-logo">
+    <button class="hamburger" id="hamburger-btn">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <img src="icon.png" alt="Nihongo" class="site-icon">
+    <span class="site-name">Nihongo</span>
+  </div>
+
+  <!-- Middle Section: Chat and Notification -->
+  <div class="header-center">
+	<a href="chats/chats.html"> <button class="chat-btn" id="chat-btn"> <i class="chat-icon">💬</i>
+  		</button>
+	</a>
+	
+    <div class="notification-btn" id="notification-btn">
+      <i class="notification-icon">🔔</i>
+      <div class="notification-dropdown" id="notification-dropdown">
+        <ul>
+          <li>Enable Notifications</li>
+          <li>Disable Notifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Section: Username and User Icon -->
+  <div class="header-right">
+  
+    <span class="user-name" id="activeUser"><strong></strong></span>
+    <button class="user-icon" onclick="toggleDropdown()" id="dropdownButton">
+      <img src="user.png" alt="User">
+    </button>
+    
+  </div>
+</header>
+
+<div class="dropdown">
+    <div class="dropdown-content" id="dropdownMenu">
+      <div class="profile">
+      	<div class="profile-img-wrapper">
+  	       	<img id="profileImg" src="" alt="Profile Picture" onclick="changeImage()">
+          </div>
+		  <div id="activeUser2" class="username">Username</div>
+      </div>
+      <a href="#changePassword">Change Password</a>
+      <a href="#addRecovery">Add Recovery</a>
+      <a href="#surprise">Surprise</a>
+      <a id="logout-btn" href="#logout" style="background:red;"><b>Logout</b></a>
+    </div>	      
+  
+    <div class="heading">
+		<h1>Japanese Learning Guidebook 🌸</h1>
+    </div>
+  </div>
+
+
+    <div id="master" class="container">
+      <nav>
+        <a href="/nihongo/contents/nouns.html">👘 Nouns</a>
+        <a href="/nihongo/contents/adjectives.html">🍡 Adjectives</a>
+        <a href="/nihongo/contents/verbs.html">🔑 Verbs</a>
+        <a href="/nihongo/contents/vocabs.html">🪭 Vocabs</a>
+        <a href="/nihongo/contents/particles.html">⚡ Particles</a>
+        <a href="/nihongo/contents/extras.html">🏆 Extras</a>
+      </nav>
+
+      <div id="main" class="main-content">
+        <!-- Wrap the cards with anchor tags -->
+        <a href="/nihongo/contents/nouns.html" class="card" id="nouns">
+          <h3>🍣 Nouns</h3>
+          <p>Learn all about Japanese nouns and their usage.</p>
+        </a>
+        <a href="/nihongo/contents/adjectives.html" class="card" id="adjectives">
+          <h3>🍓 Adjectives</h3>
+          <p>Understand how adjectives work in Japanese.</p>
+        </a>
+        <a href="/nihongo/contents/verbs.html" class="card" id="conjugations">
+          <h3>🔑 Verbs & Conjugations</h3>
+          <p>Get to know verb conjugation patterns.</p>
+        </a>
+        <a href="/nihongo/contents/sentence-structure.html" class="card" id="sentence-structure">
+          <h3>📖 Sentence Structure</h3>
+          <p>Learn how to build sentences in Japanese.</p>
+        </a>
+        <a href="/nihongo/contents/particles.html" class="card" id="particles">
+          <h3>✨ Particles</h3>
+          <p>Understand the different particles in Japanese grammar.</p>
+        </a>
+        <a href="/nihongo/contents/vocabs.html" class="card" id="vocabs">
+          <h3>🪭 Vocabs</h3>
+          <p>Appetite for vocabularies, here you have .</p>
+        </a>      
+        <a href="/nihongo/contents/extras.html" class="card" id="extras">
+          <h3>🏆 Extras</h3>
+          <p>General queries and questions about words differences: what to use and when.</p>
+        </a>      
+      </div>
+      </div>
+  
+    <footer>
+      <div class="footer-content">
+        <p>© 2024 Nihongo Guidebook | All Rights Reserved</p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Use</a></p>
+        <p class="made-with-love">Made with<img src="img/heart.png" alt="Heart Icon" class="footer-icon"> for<img src="img/jp.png" alt="JP flag icon" class="footer-icon"> by<a href="https://yoshioka0.github.io/" class="custom-link">Yoshioka</a></p>
+      </div>
+    </footer>
+
+    <!-- Floating Notification Button -->
+<button id="enable-notifications" class="floating-button" style="display: none;">
+    📢
+</button>
+
+    <!-- Scroll Buttons -->
+    <button id="scroll-up" class="scroll-btn" style="display: none;" aria-label="Scroll Up">&#8593;</button>
+    <button id="scroll-down" class="scroll-btn" style="display: none;" aria-label="Scroll Down">&#8595;</button>
+  
+  <style>
+    .container {
+      padding: 0px 20px;
+    }
+
+    h2 {
+      color: #333;
+      margin: 0px;
+    }
+
+    h3 {
+      color: #444;
+      margin: 0px;
+    }
+  </style>
+  
+  <script src="script.js"></script>
+
+  <!-- Service Worker Registration for Offline Capability -->
+  <script>
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/nihongo/web-push/service-worker.js')
+            .then(async registration => {
+                console.log('Service Worker registered with scope:', registration.scope);
+
+                const subscription = await registration.pushManager.getSubscription();
+                if (!subscription) {
+                    await subscribeUserToPush(registration);
+                } else {
+                    console.log('Already subscribed:', subscription);
+                }
+            })
+            .catch(error => {
+                console.error('Service Worker registration failed:', error);
+                alert('Service Worker registration failed. Push notifications may not work.');
+            });
+    });
+} else {
+    console.error('Push Notifications are not supported in this browser.');
+}
+  </script>
+
+</body>
+</html>

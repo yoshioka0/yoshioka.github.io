@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <script src="/nihongo/config.js"></script>
+     <script src="/nihongo/auth-v2.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
+    
+    <main>
+        <section id="tabs">
+            <button class="tab-button active" data-tab="users">Users</button>
+            <button class="tab-button" data-tab="send-notifications">Send Notifications</button>
+            <button class="tab-button" data-tab="view-notifications">View Notifications</button>
+            <button class="tab-button" data-tab="subscriptions">Subscriptions</button>
+        </section>
+
+        <!-- Manage Users Tab -->
+        <section id="users" class="tab-content active">
+            <h2>Manage Users</h2>
+            <table>
+                <thead>
+                    <tr>
+      				  <th>UserId</th>                  
+						<th>Username</th>
+                        <th>IP Address</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    <!-- Users will load here -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Send Notifications Tab -->
+        <section id="send-notifications" class="tab-content">
+            <h2>Send Notification</h2>
+            <form id="notification-form">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" required>
+                
+                <label for="message">Message</label>
+                <textarea id="message" name="message" required></textarea>
+                
+                <label for="icon">Icon URL (optional)</label>
+                <input type="url" id="icon" name="icon">
+                
+                <label for="image">Image URL (optional)</label>
+                <input type="url" id="image" name="image">
+                
+                <label for="username">Send to (optional)</label>
+                <input type="text" id="username" name="username" placeholder="Leave blank for all users">
+                
+                <button type="submit">Send Notification</button>
+            </form>
+        </section>
+
+<!-- View Notifications Tab -->
+<section id="view-notifications" class="tab-content">
+    <h2>View All Notifications</h2>
+    <div id="notification-list" class="notification-container">
+        <!-- Notifications will be dynamically added here -->
+    </div>
+</section>
+
+        <!-- Subscriptions Tab -->
+        <section id="subscriptions" class="tab-content">
+            <h2>Monitor Subscriptions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th >Endpoint</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="subscription-list">
+                    <!-- Subscriptions will load here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    
+     <!-- Console area to display logs -->
+    <div id="console"></div>
+
+        
+    <script src="admin.js"></script>
+</body>
+</html>

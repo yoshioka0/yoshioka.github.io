@@ -1,0 +1,278 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f8f9fa;
+    color: #333;
+}
+
+
+/* Console-like container styles */
+#console {
+    margin: 10px 15px;
+    background-color: rgba(0,0,0,0.1);
+    color: #fff;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    height: 150px;
+    overflow-y: scroll;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;  /* Keep the logs formatted with line breaks */
+}
+.log {
+    margin-bottom: 5px;
+}
+.error {
+    color: red;
+}
+.success {
+    color: green;
+}
+
+header {
+    background: #007bff;
+    color: white;
+    padding: 1em;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    margin: 0;
+}
+
+
+/* Notifications Styles */
+.notification-list {
+    display: flex;
+    flex-wrap: wrap;  /* Allow cards to wrap to the next line */
+    gap: 20px;  /* Add space between cards */
+    justify-content: center; /* Center align the cards */
+}
+
+.notification-card {
+    position: relative;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    width: 300px; /* Set a fixed width for the cards */
+}
+
+.notification-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Blurry effect for background */
+.notification-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    filter: blur(10px);
+    z-index: -1;
+    border-radius: 8px;
+}
+
+.notification-header h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.notification-date {
+    font-size: 12px;
+    color: #f0f0f0;
+}
+
+.notification-body {
+    position: relative;
+    z-index: 1; /* Ensures text stays above the blurred background */
+    background: rgba(0, 0, 0, 0.5); /* Darkens the background behind the message */
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.notification-body p {
+    font-size: 16px;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.notification-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.notification-sender {
+    font-size: 14px;
+    color: #ddd;
+}
+
+.notification-status {
+    font-size: 14px;
+    color: ;
+}
+
+.notification-icon {
+    width: 2.5rem; 
+    height: 2.5rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #ff4b5c;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #ff2a3d;
+}
+
+
+/* Tabs Section */
+#tabs {
+    display: flex;
+    justify-content: center;
+    margin: 1em 0;
+}
+
+.tab-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.tab-button:hover, .tab-button.active {
+    background: #0056b3;
+}
+
+.tab-content {
+    display: none;
+    margin: 1em;
+    padding: 1em;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 0.75em;
+    text-align: left;    
+}
+
+th {
+    background: #f4feft;
+}
+
+button {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #b71c1c;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+form input, form textarea, form button {
+    padding: 0.75em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+form button {
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    table, th, td {
+        font-size: 0.    
+    }
+
+    form input, form textarea {
+        font-size: 0.9em;
+    }
+    
+    table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+    
+}
+/* On smaller screens, stack notification cards in a column */
+@media (max-width: 768px) {
+    .notification-list {
+        flex-direction: column;  /* Stack the cards vertically */
+        align-items: center;     /* Center align the cards */
+    }
+
+    .notification-card {
+    	max-width: 500px;
+        width: 100%;  /* Make cards take full width in small screens */
+        margin: 10px 0;  /* Add margin between stacked cards */
+    }
+}

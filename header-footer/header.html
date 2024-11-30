@@ -1,0 +1,38 @@
+<header class="custom-header">
+  <!-- Left Section: Site Name and Icon -->
+  <div class="header-logo">
+    <button class="hamburger" id="hamburger-btn">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <img src="/nihongo/icon.png" alt="Nihongo" class="site-icon">
+    <span class="site-name">Nihongo</span>
+  </div>
+
+  <!-- Middle Section: Chat and Notification -->
+  <div class="header-center">
+    <button class="chat-btn" id="chat-btn">
+      <i class="chat-icon">💬</i>
+    </button>
+    <div class="notification-btn" id="notification-btn">
+      <i class="notification-icon">🔔</i>
+      <div class="notification-dropdown" id="notification-dropdown">
+        <ul>
+          <li>Enable Notifications</li>
+          <li>Disable Notifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Section: Username and User Icon -->
+  <div class="header-right">
+  
+    <span class="user-name" id="activeUser"><strong>Null</strong></span>
+    <button class="user-icon" onclick="toggleDropdown()" id="dropdownButton">
+      <img src="/nihongo/user.png" alt="User">
+    </button>
+    
+  </div>
+</header>
