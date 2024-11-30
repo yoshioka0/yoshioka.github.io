@@ -246,7 +246,13 @@ if (window.location.pathname === '/nihongo/') {
 		    // Only get Turnstile token if not in local environment
 		    let turnstileResponse = null;
 		    if (!isLocalHost()) {
-		        turnstileResponse = document.querySelector('.cf-turnstile').dataset.response;
+		      const turnstileElement = document.querySelector('.cf-turnstile');
+				if (!turnstileElement) {
+				    console.error('Turnstile element not found');
+				    return;
+				}
+				const turnstileResponse = turnstileElement.dataset.response;
+				console.log('Turnstile response:', turnstileResponse);
 		    }
 		
 		    if (!username) {
