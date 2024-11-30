@@ -19,51 +19,92 @@ body {
   line-height: 1.6;
 }
 
-/* Modal styles */
+/* Hyperlink for Sign Up / Login */
+.modal a {
+  text-decoration: none;
+  color: #3498db; /* A nice blue shade */
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 0.2em 0.4em;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.modal a:hover {
+  color: #ffffff; /* White text on hover */
+  background-color: #3498db; /* Background matches the link color */
+  border-color: #3498db; /* Add border on hover */
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3); /* Slight text glow effect */
+}
+
+/* Modal container styles */
 .modal {
   display: none;
   position: fixed;
-  inset: 0; /* Shortcut for top, right, bottom, left */
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for a more sophisticated look */
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
 }
 
+/* Modal content box styling */
 .modal-content {
-  background-color: #fff;
+  background: linear-gradient(145deg, #ffffff, #f2f2f2); /* Soft gradient background */
   padding: 20px;
-  border-radius: 8px;
-  width: 450px;
-  height: 350px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px; /* Limit the width for better responsiveness */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Deeper shadow for a floating effect */
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
 }
 
+
+/* Modal heading styling */
 .modal h2 {
-  margin: 0 0 15px;
+  font-size: 1.5rem;
+  margin: 0 0 20px;
+  color: #333; /* Darker text for clarity */
+  font-weight: 600; /* Bold heading */
 }
 
+/* Input field styles */
 input {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  margin: 15px 0;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px; /* Rounded edges for a more modern look */
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
+input:focus {
+  border-color: #3498db; /* Highlight the input field with blue on focus */
+  outline: none;
+}
+
+
+
 .modal button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    padding: 10px 20px;
+    cursor: pointer;
+	color: #0078D7;
+	font-weight: bold;
+	font-size: 1.2em;
+	display: inline-block;
+	padding: 10px 20px;
+	border: 2px solid #0078D7;
+	border-radius: 5px;
+	transition: all 0.3s;  
 }
 
 .modal button:hover {
-  background-color: #0056b3;
+  background-color: #0078D7;
+   color: #fff;
 }
 
 
@@ -492,8 +533,7 @@ button.open-dialog:hover {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 350px;
-  height: 350px;
+  margin: 10px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -513,3 +553,180 @@ button.open-dialog:hover {
         padding: 15px 5px;
     }
 }
+
+/* Surprise Button */
+#surprise-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#surprise-button:hover {
+  background-color: #45a049;
+}
+
+/* Party Elements (Balloons and Confetti) */
+#party {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  pointer-events: none; /* Prevents interaction with party elements */
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+#party.hidden {
+  display: none;
+}
+
+/* Balloons */
+.balloon {
+  position: absolute;
+  bottom: -50px; /* Start at the bottom */
+  width: 60px;
+  height: 80px;
+  background-color: #ff69b4;
+  border-radius: 50%;
+  animation: fluid 5s ease-in infinite;
+  opacity: 0.8;
+}
+
+.balloon:nth-child(1) {
+  background-color: #ff69b4;
+  animation-duration: 6s;
+  left: 10%;
+}
+
+.balloon:nth-child(2) {
+  background-color: #ff1493;
+  animation-duration: 7s;
+  left: 30%;
+}
+
+.balloon:nth-child(3) {
+  background-color: #ff4500;
+  animation-duration: 8s;
+  left: 50%;
+}
+
+.balloon:nth-child(4) {
+  background-color: #32cd32;
+  animation-duration: 6.5s;
+  left: 70%;
+}
+
+.balloon:nth-child(5) {
+  background-color: #1e90ff;
+  animation-duration: 7.5s;
+  left: 90%;
+}
+
+/* Balloon Floating Animation */
+@keyframes fluid {
+  0% {
+    bottom: -50px; /* Start below the screen */
+    transform: rotate(0deg);
+  }
+  100% {
+    bottom: 100vh; /* Move to the top of the screen */
+    transform: rotate(360deg);
+  }
+}
+
+/* Confetti container and animations*/
+    #confetti-container {
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      animation: confettiFall 3s ease-in infinite, confettiParticles 1.5s infinite;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(110vh);
+      }
+    }
+
+    @keyframes confettiParticles {
+      0% {
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(50px) rotate(360deg);
+      }
+    }
+
+/* Confetti (added for fun!) */
+.confetti2 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url('img/confetti2.gif');
+  background-size: cover;
+  opacity: 0.5;
+
+}
+
+/* Surprise message styling */
+#surprise-message {
+  display: none;
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  font-size: 1.5rem;
+}
+
+#surprise-message p {
+  font-weight: bold;
+  color: #3498db;
+}
+
+/* Show the message when triggered */
+#surprise-message.show {
+  display: block;
+}
+
+
+
+/* Show surprise message with animation */
+@keyframes showMessage {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#surprise-message {
+  animation: showMessage 0.5s ease-out forwards;
+}
+
+

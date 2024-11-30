@@ -21,7 +21,8 @@
   <noscript>
     <meta http-equiv="refresh" content="0;url=/nihongo/js-disabled.html" />
   </noscript>
-	
+  
+
 	<!-- Modal for user creation -->
   <div id="signup-modal" class="modal">
     <div class="modal-content">
@@ -29,10 +30,11 @@
 	   <form id="signup-form">
 		  <input type="text" id="signup-username" placeholder="Enter username" required>
 		  <input type="password" id="signup-password" placeholder="Enter password" required>
+				<div class="turnstile-container">
+					<div id="turnstile1" class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
+				</div>
 		
-		  <div class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
-		
-		  <button type="submit">Create User</button> <br> <br>
+		  <button type="submit">Sign Up</button> <br> <br>
 		  <p>Already have an account? <a><span id="login-here" class="login-txt">Login Here</span></a></p>
 		</form>
 		<p id="signupErrorMessage" class="error-message" style="color: red;"></p>
@@ -43,16 +45,15 @@
   
   <div id="login-modal" class="modal">
     <div class="modal-content">
-      <h2>Login</h2>
+      <h2>Log In</h2>
 	   	<form id="login-form">
 			  <input type="text" id="login-username" placeholder="Enter username" required>
 			  <input type="password" id="login-password" placeholder="Enter password" required>
 			
-			  <!-- Cloudflare Turnstile -->
-	
-			
-			  <button type="submit">Login</button> <br> <br>
-			  <p>Don't have an account? <a><span id="signup-here" class="signup-txt">Create one Here</span></a></p>
+			<div id="turnstile2" class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
+				
+			  <button type="submit">Log In</button> <br> <br>
+			  <p>Don't have an account? <a><span id="signup-here" class="signup-txt">Sign Up</span></a></p>
 			</form>
 			<p id="loginErrorMessage" class="error-message" style="color: red;"></p>
     </div>
@@ -80,10 +81,7 @@
     <div class="notification-btn" id="notification-btn">
       <i class="notification-icon">🔔</i>
       <div class="notification-dropdown" id="notification-dropdown">
-        <ul>
-          <li>Enable Notifications</li>
-          <li>Disable Notifications</li>
-        </ul>
+        
       </div>
     </div>
   </div>
@@ -109,17 +107,21 @@
       </div>
       <a href="#changePassword">Change Password</a>
       <a href="#addRecovery">Add Recovery</a>
-      <a href="#surprise">Surprise</a>
+      <a id="surprise-button" href="#surprise">Surprise</a>
       <a id="logout-btn" href="#logout" style="background:red;"><b>Logout</b></a>
-    </div>	      
+    </div>	    
+  
   
     <div class="heading">
 		<h1>Japanese Learning Guidebook 🌸</h1>
     </div>
   </div>
 
+<div id="surprise-message" class="hidden">
+  <p>🎉 Congratulations! You've unlocked a surprise! 🎉</p>
+</div>
 
-    <div id="master" class="container">
+   <div id="master" class="container">
       <nav>
         <a href="/nihongo/contents/nouns.html">👘 Nouns</a>
         <a href="/nihongo/contents/adjectives.html">🍡 Adjectives</a>
@@ -161,6 +163,20 @@
         </a>      
       </div>
       </div>
+     
+  <!-- Party Elements (balloons & confetti) -->
+  <div id="party" class="hidden">
+    <!-- Balloons -->
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <!-- Confetti -->
+  <!--  <div class="confetti"></div> -->
+    <div id="confetti-container"></div>
+  </div>
+  
   
     <footer>
       <div class="footer-content">
@@ -221,6 +237,8 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
     console.error('Push Notifications are not supported in this browser.');
 }
   </script>
+  
+  
 
 </body>
 </html>

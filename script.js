@@ -223,7 +223,7 @@ if (window.location.pathname === '/nihongo/') {
 		// Helper function to check if the hostname is local
 		function isLocalHost() {
 		    const hostname = window.location.hostname;
-		    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
+		    return hostname === '' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
 		}
 		if (isLocalHost()) {
 			const errorMessage = document.getElementById('loginErrorMessage');
@@ -246,30 +246,16 @@ if (window.location.pathname === '/nihongo/') {
 		    // Only get Turnstile token if not in local environment
 		    let turnstileResponse = null;
 		    if (!isLocalHost()) {
-		      const turnstileElement = document.querySelector('.cf-turnstile');
+		    const turnstileElement = document.querySelector('.cf-turnstile');
 				if (!turnstileElement) {
 				    console.error('Turnstile element not found');
 				    return;
 				}
-				    document.addEventListener('turnstile-success', (event) => {
-				    const turnstileResponse = turnstile.getResponse();
-				    console.log('Turnstile success, response:', turnstileResponse);
-					});
 		    }
-		
-		    if (!username) {
-		        errorMessage.textContent = 'Please enter a username.';
-		        return;
-		    }
-		
-		    // Skip Turnstile check if in local environment
-		    if (!isLocalHost() && !turnstileResponse) {
-		        errorMessage.textContent = 'N: CAPTCHA verification failed. Please try again.';
-		        return;
-		    }
-		
+			
 		    try {
-		        const response = await fetch(`${BASE_URL}/create-user`, {
+					const turnstileResponse = turnstile.getResponse(turnstile1);
+		        	const response = await fetch(`${BASE_URL}/create-user`, {
 		            method: 'POST',
 		            headers: { 'Content-Type': 'application/json' },
 		            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
@@ -300,24 +286,23 @@ if (window.location.pathname === '/nihongo/') {
 		    const errorMessage = document.getElementById('loginErrorMessage');
 		    errorMessage.textContent = 'Logging In, Please Wait...';
 		
-		    // Only get Turnstile token if not in local environment
-		    let turnstileResponse = null;
-		    if (!isLocalHost()) {
-		        turnstileResponse = document.querySelector('.cf-turnstile').dataset.response;
-		    }
-		
 		    if (!username || !password) {
 		        errorMessage.textContent = 'Please enter both username and password.';
 		        return;
 		    }
 		
-		    // Skip Turnstile check if in local environment
-		    if (!isLocalHost() && !turnstileResponse) {
-		        errorMessage.textContent = 'N: CAPTCHA verification failed. Please try again.';
-		        return;
+		  // Only get Turnstile token if not in local environment
+		    let turnstileResponse = null;
+		    if (!isLocalHost()) {
+		    const turnstileElement = document.querySelector('.cf-turnstile');
+				if (!turnstileElement) {
+				    console.error('Turnstile element not found');
+				    return;
+				}
 		    }
-		
+			
 		    try {
+				const turnstileResponse = turnstile.getResponse(turnstile2);
 		        const response = await fetch(`${BASE_URL}/login`, {
 		            method: 'POST',
 		            headers: { 'Content-Type': 'application/json' },
@@ -409,3 +394,58 @@ function changeImage() {
     // Save the selected image source in localStorage
     localStorage.setItem('profileImage', nextSrc);
 }
+
+// Surprise Button Interaction
+document.getElementById("surprise-button").addEventListener("click", function() {
+  // Show the surprise message
+  document.getElementById("surprise-message").classList.add("show");
+
+  // Show the party (balloons and confetti)
+  const party = document.getElementById("party");
+  party.classList.remove("hidden");
+
+    const container = document.getElementById('confetti-container');
+    const colors = ['#e74c3c', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
+
+    function createConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        
+        // Random horizontal position
+        confetti.style.left = Math.random() * 100 + 'vw'; 
+
+        // Random vertical position
+        confetti.style.top = Math.random() * 100 + 'vh'; 
+        
+        // Random background color
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        // Random animation delay
+        confetti.style.animationDelay = Math.random() * 3 + 's'; 
+
+        // Random size
+        const size = Math.random() * 10 + 5; 
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+
+        container.appendChild(confetti);
+      }
+    }
+
+    createConfetti();
+  
+  // Fade in the party elements
+  setTimeout(function() {
+    party.style.opacity = 1;
+  }, 100);
+  
+  
+    // Change button text to indicate surprise was unlocked
+  this.textContent = "Wow, look at that! 🎉";
+  this.disabled = true; // Disable the button after clicking
+
+  // Optional: Play a sound for added fun
+  // new Audio('path/to/party-sound.mp3').play();
+
+});
