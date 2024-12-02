@@ -1,7 +1,7 @@
 // Chat Frontend Script (chat.js)
 
 // Connect to the server using Socket.io
-const socket = io('http://localhost:3000', {
+const socket = io('https://nihongo-backend.onrender.com', {
     query: { token: localStorage.getItem('jwt') }
 });
 
