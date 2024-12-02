@@ -14,7 +14,7 @@ function decodeJWT(token) {
         }).join(''));
         return JSON.parse(jsonPayload);
     } catch (error) {
-    	console.error('Error decoding JWT:', error);
+            console.error('Error decoding JWT:', error);
         return null;  // Return null or handle it as needed
     }
 }
@@ -99,47 +99,105 @@ window.addEventListener('click', event => {
     }
 });
 
-// Check if notifications are enabled or denied using notif btn
+// Check if notifications are enabled or denied
 if ('Notification' in window) {
+    const notifBtn = document.getElementById('enable-notifications');
+
     if (Notification.permission === 'denied') {
-        // Check if the element exists before attempting to show it
-        const notifBtn = document.getElementById('enable-notifications');
         if (notifBtn) {
-            // Show the floating button if notifications are denied
             notifBtn.style.display = 'block';
-
-            // Event listener for enabling notifications
-            notifBtn.addEventListener('click', function() {
-                // Show an alert to let the user know why we're asking for permission
+            notifBtn.addEventListener('click', async () => {
                 alert('We need your permission to send you notifications.');
-
-                // Request notification permission from the user
-                Notification.requestPermission().then(function(permission) {
-                    if (permission === 'granted') {
-                        // After granting permission, hide the floating button
-                        notifBtn.style.display = 'none';
-
-                        // Optionally, subscribe the user for push notifications here
-                        // You could call your subscribeUserToPush() function
-                        console.log('Notification permission granted!');
-                        location.reload();
-                    } else {
-                        // If the user still denies, keep the button visible
-                        console.log('Notification permission denied!');
-                        alert('Notification permission denied! Enable it from the site settings.');
-                    }
-                });
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    notifBtn.style.display = 'none';
+                    location.reload();
+                } else {
+                    alert('Notification permission denied! Enable it from the site settings.');
+                }
             });
         }
+    } else if (Notification.permission === 'default') {
+        console.log('Notification permission has not been requested yet.');
     }
 } else {
-    console.log('Push notifications are not supported in this browser.');
-    alert('Push notifications are not supported in this browser.');
+    console.error('Push notifications are not supported in this browser.');
 }
 
 
 
-async function subscribeUserToPush(registration) {
+async function clearSubscriptions() {
+    if ('serviceWorker' in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+            const subscription = await registration.pushManager.getSubscription();
+            if (subscription) {
+                await subscription.unsubscribe();
+                console.log('Previous subscription cleared.');
+            }
+        }
+    }
+}
+
+
+async function ensureCorrectSubscription(registration, userId) {
+    try {
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+            // Fetch user ID tied to the subscription from the server
+            const response = await fetch(`${BASE_URL}/subscription-user`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${getJWTToken()}`,
+                },
+                body: JSON.stringify({ endpoint: subscription.endpoint }),
+            });
+
+            if (response.ok) {
+                const { serverUserId } = await response.json();
+
+                // Check if the subscription belongs to the logged-in user
+                if (serverUserId === userId) {
+                    console.log('Subscription matches the logged-in user.');
+                    return true; // Subscription is valid
+                }
+
+                console.log('Subscription does not match the logged-in user. Clearing it.');
+                await subscription.unsubscribe();
+            } else {
+                console.error('Failed to verify subscription on the server:', response.statusText);
+            }
+        }
+    } catch (error) {
+        console.error('Error while ensuring correct subscription:', error);
+    }
+
+    return false; // Subscription needs to be recreated
+}
+
+
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    window.addEventListener('load', async () => {
+        try {
+            const registration = await navigator.serviceWorker.register('/nihongo/service-worker.js');
+            console.log('Service Worker registered with scope:', registration.scope);
+
+            const token = getJWTToken();
+            const userId = decodeJWT(token).userId;
+
+            const isSubscriptionValid = await ensureCorrectSubscription(registration, userId);
+            if (!isSubscriptionValid) {
+                await subscribeUserToPush(registration, userId);
+            }
+        } catch (error) {
+            console.error('Error during service worker or subscription setup:', error);
+        }
+    });
+}
+
+
+async function subscribeUserToPush(registration, userId) {
     const token = getJWTToken();
     if (!token || isTokenExpired(token)) {
         console.error('No valid JWT token found. Subscription cannot be made.');
@@ -147,29 +205,29 @@ async function subscribeUserToPush(registration) {
     }
 
     try {
-        const subscription = await registration.pushManager.subscribe({
+        const newSubscription = await registration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY),
         });
-
-        const userId = decodeJWT(token).userId; // Get userId from the decoded JWT
-        subscription.userId = userId;
+ //       const userAgent = navigator.userAgent;
+//   	 console.log(deviceInfo);      // This will give the user agent string
+//		newSubscription.deviceInfo = deviceInfo;
+        newSubscription.userId = userId;
 
         await fetch(`${BASE_URL}/subscribe`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getJWTToken()}`,
+                'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify(subscription),
+            body: JSON.stringify(newSubscription),
         });
 
-        console.log('Subscription sent to the server:', subscription);
+        console.log('New subscription sent to the server:', newSubscription);
     } catch (error) {
         console.error('Failed to subscribe user to push:', error);
     }
 }
-
 
 
 // User Authentication
@@ -195,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const token = getJWTToken();
 
     if (!token || isTokenExpired(token)) {
-        
+
     } else {
         updateActiveUser();
     }
@@ -208,127 +266,223 @@ const signupHere = document.getElementById("signup-here");
 
 // Add a click event listener
 if (window.location.pathname === '/nihongo/') {
-	
-		loginHere.addEventListener("click", () => {
-		document.getElementById("login-modal").style.display = "flex";
-		document.getElementById("signup-modal").style.display = "none";
-		});
-		signupHere.addEventListener("click", () => {
-		document.getElementById("signup-modal").style.display = "flex";
-		document.getElementById("login-modal").style.display = "none";
-		});
-		
-		
-		
-		// Helper function to check if the hostname is local
-		function isLocalHost() {
-		    const hostname = window.location.hostname;
-		    return hostname === '' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
-		}
-		if (isLocalHost()) {
-			const errorMessage = document.getElementById('loginErrorMessage');
-			const errorMessage2 = document.getElementById('signupErrorMessage'); 
-			errorMessage.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-			errorMessage2.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-			console.log('Using Local Environment, Skipping Turnstile Verification');        
-		    }
-		
-		
-		// New User Creation
-		document.getElementById('signup-form').addEventListener('submit', async (event) => {
-		    event.preventDefault();
-		
-		    const username = document.getElementById('signup-username').value.trim();
-		    const password = document.getElementById('signup-password').value;
-		    const errorMessage = document.getElementById('signupErrorMessage'); 
-		    errorMessage.textContent = 'Creating Account, Please Wait...';
-		
-		    // Only get Turnstile token if not in local environment
-		    let turnstileResponse = null;
-		    if (!isLocalHost()) {
-		    const turnstileElement = document.querySelector('.cf-turnstile');
-				if (!turnstileElement) {
-				    console.error('Turnstile element not found');
-				    return;
-				}
-		    }
-			
-		    try {
-					const turnstileResponse = turnstile.getResponse(turnstile1);
-		        	const response = await fetch(`${BASE_URL}/create-user`, {
-		            method: 'POST',
-		            headers: { 'Content-Type': 'application/json' },
-		            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
-		        });
-		        const data = await response.json();
-		        if (response.ok) {
-		            localStorage.setItem('jwt', data.token);
-		            console.log('JWT Token:', data.token);
-		            updateActiveUser();
-		            alert(`User created successfully! (${username})`);
-		            document.getElementById('signup-modal').style.display = 'none';
-		            location.reload();
-		        } else {
-		            errorMessage.textContent = data.error || 'Something went wrong!';
-		        }
-		    } catch (error) {
-		        console.error('Error:', error);
-		        errorMessage.textContent = 'Error connecting to the server. Please try again.';
-		    }
-		});
-		
-		// Login Form Submission
-		document.getElementById('login-form').addEventListener('submit', async (event) => {
-		    event.preventDefault();
-		
-		    const username = document.getElementById('login-username').value.trim();
-		    const password = document.getElementById('login-password').value;
-		    const errorMessage = document.getElementById('loginErrorMessage');
-		    errorMessage.textContent = 'Logging In, Please Wait...';
-		
-		    if (!username || !password) {
-		        errorMessage.textContent = 'Please enter both username and password.';
-		        return;
-		    }
-		
-		  // Only get Turnstile token if not in local environment
-		    let turnstileResponse = null;
-		    if (!isLocalHost()) {
-		    const turnstileElement = document.querySelector('.cf-turnstile');
-				if (!turnstileElement) {
-				    console.error('Turnstile element not found');
-				    return;
-				}
-		    }
-			
-		    try {
-				const turnstileResponse = turnstile.getResponse(turnstile2);
-		        const response = await fetch(`${BASE_URL}/login`, {
-		            method: 'POST',
-		            headers: { 'Content-Type': 'application/json' },
-		            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
-		        });
-		        const data = await response.json();        
-		        if (response.ok) {
-		            localStorage.setItem('jwt', data.token);
-		            console.log('JWT Token:', data.token);
-		            updateActiveUser();
-		            alert(`Welcome back, ${username}!`);
-		            document.getElementById('login-modal').style.display = 'none';
-		            location.reload();
-		        } else {
-		            errorMessage.textContent = data.error || 'Invalid username or password.';
-		        }
-		    } catch (error) {
-		        console.error('Error:', error);
-		        errorMessage.textContent = 'Error connecting to the server. Please try again.';
-		    }
-		});
+
+                loginHere.addEventListener("click", () => {
+                document.getElementById("login-modal").style.display = "flex";
+                document.getElementById("signup-modal").style.display = "none";
+                });
+                signupHere.addEventListener("click", () => {
+                document.getElementById("signup-modal").style.display = "flex";
+                document.getElementById("login-modal").style.display = "none";
+                });
+
+
+
+                // Helper function to check if the hostname is local
+                function isLocalHost() {
+                    const hostname = window.location.hostname;
+                    return hostname === '' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
+                }
+                if (isLocalHost()) {
+                        const errorMessage = document.getElementById('loginErrorMessage');
+                        const errorMessage2 = document.getElementById('signupErrorMessage'); 
+                        errorMessage.textContent = 'Using Local Environment, Skipping Turnstile Verification';
+                        errorMessage2.textContent = 'Using Local Environment, Skipping Turnstile Verification';
+                        console.log('Using Local Environment, Skipping Turnstile Verification');        
+                    }
+
+
+                // New User Creation
+                document.getElementById('signup-form').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const username = document.getElementById('signup-username').value.trim();
+                    const password = document.getElementById('signup-password').value;
+                    const errorMessage = document.getElementById('signupErrorMessage'); 
+                    errorMessage.textContent = 'Creating Account, Please Wait...';
+
+                    // Only get Turnstile token if not in local environment
+                    let turnstileResponse = null;
+                    if (!isLocalHost()) {
+                    const turnstileElement = document.querySelector('.cf-turnstile');
+                                if (!turnstileElement) {
+                                    console.error('Turnstile element not found');
+                                    return;
+                                }
+                    }
+
+                    try {
+                                        const turnstileResponse = turnstile.getResponse(turnstile1);
+                                const response = await fetch(`${BASE_URL}/create-user`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            localStorage.setItem('jwt', data.token);
+                            console.log('JWT Token:', data.token);
+                            updateActiveUser();
+                            alert(`User created successfully! (${username})`);
+                            document.getElementById('signup-modal').style.display = 'none';
+                            location.reload();
+                        } else {
+                            errorMessage.textContent = data.error || 'Something went wrong!';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        errorMessage.textContent = 'Error connecting to the server. Please try again.';
+                    }
+                });
+
+                // Login Form Submission
+                document.getElementById('login-form').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const username = document.getElementById('login-username').value.trim();
+                    const password = document.getElementById('login-password').value;
+                    const errorMessage = document.getElementById('loginErrorMessage');
+                    errorMessage.textContent = 'Logging In, Please Wait...';
+
+                    if (!username || !password) {
+                        errorMessage.textContent = 'Please enter both username and password.';
+                        return;
+                    }
+
+                  // Only get Turnstile token if not in local environment
+                    let turnstileResponse = null;
+                    if (!isLocalHost()) {
+                    const turnstileElement = document.querySelector('.cf-turnstile');
+                                if (!turnstileElement) {
+                                    console.error('Turnstile element not found');
+                                    return;
+                                }
+                    }
+
+                    try {
+                                const turnstileResponse = turnstile.getResponse(turnstile2);
+                        const response = await fetch(`${BASE_URL}/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
+                        });
+                        const data = await response.json();        
+                        if (response.ok) {
+                            localStorage.setItem('jwt', data.token);
+                            console.log('JWT Token:', data.token);
+                            updateActiveUser();
+                            alert(`Welcome back, ${username}!`);
+                            document.getElementById('login-modal').style.display = 'none';
+                            location.reload();
+                        } else {
+                            errorMessage.textContent = data.error || 'Invalid username or password.';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        errorMessage.textContent = 'Error connecting to the server. Please try again.';
+                    }
+                });
 
 }
+
+
+
+// Fetch and display user subscriptions in the dropdown
+async function fetchSubscriptions() {
+    const token = getJWTToken(); // Assumes you have a function to get the JWT token
+
+    if (!token) {
+        console.error('No valid token. Cannot fetch subscriptions.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/user/subscriptions`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            console.error('Failed to fetch subscriptions:', await response.text());
+            return;
+        }
+
+        const subscriptions = await response.json();
+
+        const dropdown = document.getElementById('notification-dropdown');
+        dropdown.innerHTML = ''; // Clear existing list
+
+        if (subscriptions.length === 0) {
+            dropdown.innerHTML = '<h3>No active subscriptions found.</h3>';
+            return;
+        }
+			const heading = document.createElement('h3');
+			heading.textContent = 'Active Subscriptions';
+			heading.classList.add('dropdown-heading'); // Optional: Add a class for styling
+			dropdown.appendChild(heading);
+			
+        	subscriptions.forEach(subscription => {
+            const listItem = document.createElement('div');
+            listItem.classList.add('subscription-item');
+
+            const subscriptionInfo = document.createElement('span');
+            subscriptionInfo.textContent = `Device: ${subscription.deviceInfo || 'Unknown Device'}, IP: ${subscription.ipAddress || 'Unknown IP'}, Last Active: ${new Date(subscription.lastActive).toLocaleString() || 'Unknown'}`;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.onclick = () => deleteSubscription(subscription.endpoint);
+
+            listItem.appendChild(subscriptionInfo);
+            listItem.appendChild(deleteButton);
+
+            dropdown.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching subscriptions:', error);
+    }
+}
+
+// Delete a subscription
+async function deleteSubscription(endpoint) {
+    const token = getJWTToken();
+
+    if (!token) {
+        console.error('No valid token. Cannot delete subscription.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/unsubscribe`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ endpoint }),
+        });
+
+        if (!response.ok) {
+            console.error('Failed to delete subscription:', await response.text());
+            return;
+        }
+
+        console.log('Subscription deleted successfully.');
+        fetchSubscriptions(); // Refresh the list
+    } catch (error) {
+        console.error('Error deleting subscription:', error);
+    }
+}
+
+// Call fetchSubscriptions when the page loads or when a user is logged in
+window.addEventListener('load', () => {
+    fetchSubscriptions(); // Fetch and display subscriptions
+});
+
+
+
 // log-out functionality 
 const logoutButton = document.getElementById('logout-btn');
-
 // Show the logout button if the user is logged in
 function checkLoginStatus() {
     const token = localStorage.getItem('jwt');
@@ -340,20 +494,24 @@ function checkLoginStatus() {
 }
 
 // Logout function
-logoutButton.addEventListener('click', () => {
+logoutButton.addEventListener('click', async () => {
+    await clearSubscriptions();
     localStorage.removeItem('jwt');
-    // Optionally, clear any other data (like user info, etc.)
-    sessionStorage.removeItem('user_data');  // If you are using sessionStorage
+    sessionStorage.removeItem('user_data');
     location.reload();
-    window.location.href = '/nihongo'; // You can set this to any desired page, like '/login'
+    window.location.href = '/nihongo'; // Redirect to the desired page
 });
+
 
 // Call checkLoginStatus to ensure the logout button is shown when appropriate
 checkLoginStatus();
 
+
+
 // header js
+
 // Toggle notification dropdown
-const notificationBtn = document.getElementById("notification-btn");
+const notificationBtn = document.getElementById("notification-active");
 const notificationDropdown = document.getElementById("notification-dropdown");
 
 notificationBtn.addEventListener("click", () => {
@@ -411,13 +569,13 @@ document.getElementById("surprise-button").addEventListener("click", function() 
       for (let i = 0; i < 50; i++) {
         const confetti = document.createElement('div');
         confetti.classList.add('confetti');
-        
+
         // Random horizontal position
         confetti.style.left = Math.random() * 100 + 'vw'; 
 
         // Random vertical position
         confetti.style.top = Math.random() * 100 + 'vh'; 
-        
+
         // Random background color
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
@@ -434,13 +592,13 @@ document.getElementById("surprise-button").addEventListener("click", function() 
     }
 
     createConfetti();
-  
+
   // Fade in the party elements
   setTimeout(function() {
     party.style.opacity = 1;
   }, 100);
-  
-  
+
+
     // Change button text to indicate surprise was unlocked
   this.textContent = "Wow, look at that! 🎉";
   this.disabled = true; // Disable the button after clicking

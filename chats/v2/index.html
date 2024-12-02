@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="chat.css">
+    <title>Chat Page</title>
+</head>
+<body>
+	
+	
+    <div class="chat-container">
+        <!-- Left Panel: User List -->
+        <div class="left-panel">
+            <div class="header">
+                <h2>Chats</h2>
+                         <div class="profile">
+                <img src="/nihongo/img/null.png" alt="Profile">
+        
+                <p id="myUsername">Your Username</p> <!-- Dynamically populate this in chat.js -->
+            </div>
+                <input id="search-users" type="text" placeholder="Search users..." />
+            </div>
+            <div id="chat-list" class="chat-list">
+                <!-- User items will be dynamically loaded here -->
+            </div>
+            <button id="logoutBtn" class="logout-button">Logout</button>
+        </div>
+
+        <!-- Right Panel: Chat Window -->
+        <div class="right-panel">
+            <div id="chat-window" class="chat-window">
+                <div class="chat-header">
+                    <h3 id="chat-user">Select a user to chat</h3>
+                    <button id="block-button" class="block-button" style="display: none;">Block</button>
+                </div>
+                <div id="messages" class="messages">
+                    <!-- Messages will be dynamically loaded here -->
+                </div>
+                <div id="typing-indicator" class="typing-indicator" style="display: none;">User is typing...</div>
+            </div>
+            <div class="message-input-area">
+                <input id="message-input" type="text" placeholder="Type a message..." />
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+    
+ 
+    
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

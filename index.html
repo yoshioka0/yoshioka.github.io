@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Japanese Learning Guidebook</title>
-  <meta name="description" content="Learn Japanese through a comprehensive guide by Yoshioka, covering writing systems, grammar, essential vocabulary, cultural insights, and practical tips for beginners. A user-friendly resource for mastering the language step by step.">
+  <title>Nihongo 日本語</title>
+  <meta name="description" content="Learn Japanese through a comprehensive guide by Yoshioka sensei, covering writing systems, grammar, essential vocabulary, cultural insights, and practical tips for beginners. A user-friendly resource for mastering the language step by step.">
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
@@ -30,10 +30,10 @@
 	   <form id="signup-form">
 		  <input type="text" id="signup-username" placeholder="Enter username" required>
 		  <input type="password" id="signup-password" placeholder="Enter password" required>
-				<div class="turnstile-container">
-					<div id="turnstile1" class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
-				</div>
-		
+				
+					<!-- class of the turnstile will be added by auth-v2.js if user unauthicated -->
+					<div id="turnstile1"  data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
+						
 		  <button type="submit">Sign Up</button> <br> <br>
 		  <p>Already have an account? <a><span id="login-here" class="login-txt">Login Here</span></a></p>
 		</form>
@@ -50,7 +50,8 @@
 			  <input type="text" id="login-username" placeholder="Enter username" required>
 			  <input type="password" id="login-password" placeholder="Enter password" required>
 			
-			<div id="turnstile2" class="cf-turnstile" data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
+			<!-- class of the turnstile will be added by auth-v2.js if user unauthicated -->
+			<div id="turnstile2"  data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
 				
 			  <button type="submit">Log In</button> <br> <br>
 			  <p>Don't have an account? <a><span id="signup-here" class="signup-txt">Sign Up</span></a></p>
@@ -73,18 +74,17 @@
   </div>
 
   <!-- Middle Section: Chat and Notification -->
-  <div class="header-center">
+<div class="header-center">
 	<a href="chats/chats.html"> <button class="chat-btn" id="chat-btn"> <i class="chat-icon">💬</i>
   		</button>
 	</a>
 	
-    <div class="notification-btn" id="notification-btn">
-      <i class="notification-icon">🔔</i>
-      <div class="notification-dropdown" id="notification-dropdown">
-        
-      </div>
-    </div>
-  </div>
+<div class="notification-btn" id="notification-active">
+    <i class="notification-icon">🔔</i>
+    
+</div>
+    
+</div>
 
   <!-- Right Section: Username and User Icon -->
   <div class="header-right">
@@ -96,6 +96,12 @@
     
   </div>
 </header>
+
+<div class="dropdown">	
+<div class="notification-dropdown" id="notification-dropdown">
+        <!-- Subscriptions will be dynamically added here -->
+    </div>
+</div>
 
 <div class="dropdown">
     <div class="dropdown-content" id="dropdownMenu">
@@ -191,6 +197,12 @@
     📢
 </button>
 
+<script>
+    document.getElementById('enable-notifications').addEventListener('click', () => {
+        subscribeUserToPush();
+    });
+</script>
+
     <!-- Scroll Buttons -->
     <button id="scroll-up" class="scroll-btn" style="display: none;" aria-label="Scroll Up">&#8593;</button>
     <button id="scroll-down" class="scroll-btn" style="display: none;" aria-label="Scroll Down">&#8595;</button>
@@ -210,35 +222,8 @@
       margin: 0px;
     }
   </style>
-  
-  <script src="script.js"></script>
 
-  <!-- Service Worker Registration for Offline Capability -->
-  <script>
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/nihongo/web-push/service-worker.js')
-            .then(async registration => {
-                console.log('Service Worker registered with scope:', registration.scope);
-
-                const subscription = await registration.pushManager.getSubscription();
-                if (!subscription) {
-                    await subscribeUserToPush(registration);
-                } else {
-                    console.log('Already subscribed:', subscription);
-                }
-            })
-            .catch(error => {
-                console.error('Service Worker registration failed:', error);
-                alert('Service Worker registration failed. Push notifications may not work.');
-            });
-    });
-} else {
-    console.error('Push Notifications are not supported in this browser.');
-}
-  </script>
-  
-  
+  <script  src="script.js"></script>  
 
 </body>
 </html>

@@ -1,0 +1,62 @@
+/* chat.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-container {
+    display: flex;
+    height: 100vh;
+}
+
+.left-panel {
+    width: 30%;
+    border-right: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f4f4f4;
+}
+
+.right-panel {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.common-lobby {
+    padding: 10px;
+    background-color: #ccc;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.user-list > div {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.chat-window {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.chat-input {
+    display: flex;
+    gap: 5px;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+}

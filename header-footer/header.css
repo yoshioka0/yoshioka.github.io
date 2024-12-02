@@ -71,30 +71,50 @@
   cursor: pointer;
 }
 
-.notification-dropdown {
+#notification-dropdown {
   display: none;
   position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  color: white;
+  background: rgba(0, 0, 0, 0.8); /* Frosted glass effect */
+  backdrop-filter: blur(8px); /* Adds the blur effect */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 300px;
+  padding: 10px;
+  z-index: 10;
+  margin: 5px 5px;  
+    
 }
 
-.notification-dropdown ul {
-  list-style: none;
+.subscription-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
 }
 
-.notification-dropdown li {
-  padding: 8px 12px;
-  cursor: pointer;
+#notification-dropdown button {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 5px
 }
 
-.notification-dropdown li:hover {
-  background-color: #f0f0f0;
+#notification-dropdown h3{
+	color: yellow;
 }
+
+#notification-dropdown button:hover {
+    background-color: darkred;
+}
+
+/* Show the dropdown when the user hovers over the notification button */
+#notification-active:hover #notification-dropdown {
+    display: block;
+}
+
 
 /* Right Section: User Info */
 .header-right {

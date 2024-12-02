@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Page</title>
+    <link rel="stylesheet" href="chat.css">
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="profile">
+                <img src="/nihongo/img/null.png" alt="Profile">
+        
+                <p id="myUsername">Your Username</p> <!-- Dynamically populate this in chat.js -->
+            </div>
+            <input id="searchInput" type="text" placeholder="Search users...">
+            <div class="common-lobby" onclick="openLobby()">Lobby</div>
+            <div id="chat-list" class="user-list">
+                <!-- Dynamic user list will be appended here -->
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div id="chatHeader" class="chat-header">
+                <!-- Chat recipient's name will be displayed here -->
+            </div>
+            <div id="chat-window" class="chat-window">
+                <!-- Chat messages will be displayed here -->
+            </div>
+            <div class="chat-input">
+                            
+                <button onclick="showEmojis()">😊</button> <!-- Implement showEmojis() function in chat.js -->
+                <input id="message-input" type="text" placeholder="Type a message...">
+                <button onclick="sendAttachment()">📎</button> <!-- Implement sendAttachment() for file uploads -->
+                <button onclick="sendVoiceMessage()">🎤</button> <!-- Implement sendVoiceMessage() for voice message functionality -->
+                <button id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="chat.js"></script>
+</body>
+</html>

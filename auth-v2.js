@@ -66,6 +66,7 @@ async function checkAuthentication() {
 	        document.getElementById('main').style.display = 'flex';
 	        document.getElementById('master').style.filter = 'none';
 	        document.getElementById('master').style.pointerEvents = '';
+			
 	    }
 	} catch (error) {
 	    console.error('Authentication failed:', error);
@@ -83,7 +84,8 @@ function logout() {
         document.getElementById('master').style.filter = 'blur(5px)';
         document.getElementById('master').style.pointerEvents = 'none';
         document.getElementById('activeUser').textContent = 'No user';  
-        console.log('Your session has expired. Please log in again.');
+        document.getElementById('turnstile1').className = 'cf-turnstile';
+        document.getElementById('turnstile2').className = 'cf-turnstile';
     } else {
         window.location.href = '/nihongo/';
     }
