@@ -54,7 +54,7 @@ async function fetchAPI(endpoint, method = 'GET', body = null) {
     const options = { method, headers };
     if (body) options.body = JSON.stringify(body);
 
-    const response = await fetch(`http://localhost:3000${endpoint}`, options); // Added full URL
+    const response = await fetch(`https://nihongo-backend.onrender.com${endpoint}`, options); // Added full URL
     if (!response.ok) throw new Error(await response.text());
     return response.json();
 }
