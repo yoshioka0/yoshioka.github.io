@@ -1,3 +1,23 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const chatItems = document.querySelectorAll('.user-item');
+  
+  // Click on a user to open chat window
+  chatItems.forEach(item => {
+    item.addEventListener('click', () => {
+      
+    });
+  });
+
+  // Click the header in chat to go back to user list
+  const chatHeader = document.querySelector('.chat-header');
+  chatHeader.addEventListener('click', () => {
+    leftPanel.classList.remove('hidden');
+    chatWindow.classList.remove('active');
+    chatWindow.classList.add('none'); // Hide chat window when returning to user list
+  });
+});
+
+
 // Chat Frontend Script (chat.js)
 
 // Connect to the server using Socket.io
@@ -61,75 +81,103 @@ async function fetchAPI(endpoint, method = 'GET', body = null) {
 
 
 // 1. Load User List (Left Panel) with Search and Always Show Chatted Users
-// 2. Load User List (Left Panel) with Search Query
-async function loadChatList(query = '') {
+async function loadChatList(searchQuery = '') {
     try {
-    	chatList.innerHTML = '';
-        // Construct the query string with the search query
-        const users = await fetchAPI(`/api/users?username=${query}`);
-        chatList.innerHTML = '';
-        users.forEach((user) => {
-            const userItem = document.createElement('div');
-            userItem.textContent = user.username;
-            userItem.classList.add('user-item');
-            userItem.dataset.userId = user._id;
+        chatList.innerHTML = ''; // Clear previous list
 
-            userItem.addEventListener('click', () => openChat(user._id, user.username));
-            chatList.appendChild(userItem);
-        });
+        // Fetch previously chatted users (from localStorage)
+        const chattedUsers = JSON.parse(localStorage.getItem('chattedUsers')) || [];
+
+        // Fetch all users from the server, only send search query if it's valid (>= 4 chars)
+        const url = searchQuery.length >= 4 ? `/api/users?username=${searchQuery}` : '/api/users';
+        const allUsers = await fetchAPI(url);
+
+        // Initialize arrays for users to display
+        const usersToDisplay = [];
+
+        // If no search query, only show chatted users
+        if (searchQuery.length === 0) {
+            // Filter out users who have already been chatted with
+            allUsers.forEach((user) => {
+                if (chattedUsers.includes(user.username)) {
+                    usersToDisplay.push(user);  // Already chatted users will be prioritized
+                }
+            });
+        } else {
+            // If there's a search query, show users based on the query
+            const nonChattedUsers = [];
+
+            allUsers.forEach((user) => {
+                if (chattedUsers.includes(user.username)) {
+                    usersToDisplay.push(user);  // Already chatted users will be prioritized
+                } else {
+                    nonChattedUsers.push(user);  // Non-chatted users will be added based on query
+                }
+            });
+
+            // Show only non-chatted users that match the search query
+            usersToDisplay.push(...nonChattedUsers);
+        }
+
+        // If no users found
+        if (usersToDisplay.length === 0) {
+            chatList.innerHTML = '<p>No users found.</p>';
+        } else {
+            // Display users
+            usersToDisplay.forEach((user) => {
+                const userItem = document.createElement('div');
+                userItem.textContent = user.username;  // Display username
+                userItem.classList.add('user-item');
+                userItem.dataset.userId = user._id;
+
+                // Add event listener to open the chat with the selected user
+                userItem.addEventListener('click', () => openChat(user._id, user.username));
+                
+
+                chatList.appendChild(userItem);
+            });
+        }
+
     } catch (error) {
-    	chatList.innerHTML = '<p>No users found. Query length must be >=3</p>';
         console.error('Error loading chat list:', error.message);
     }
 }
 
-//  Search Users (Trigger on input change)
-function searchUsers() {
-    const query = document.getElementById('search-users').value.trim();
-    loadChatList(query);  // Pass the search query to load the user list
-}
+// Event listener for search input
+document.getElementById('search-users').addEventListener('input', (e) => {
+    const searchQuery = e.target.value.trim();
+    loadChatList(searchQuery);  // Reload user list with the search query
+});
+
 
 
 // 2. Open Chat with a User
+// Open Chat with a User
 async function openChat(recipientUserId, recipientUsername) {
     currentChatUserId = recipientUserId;
+    document.getElementById('opUsername').textContent = recipientUsername;
     currentChatUsername = recipientUsername;
-
-    // Clear the chat window and add a fixed header
-    chatWindow.innerHTML = `
-        <div  id="chat-header" class="chat-header">
-            <h3>Chat with ${recipientUsername}</h3>
-        </div>
-        <div class="chat-messages"></div>  `;
-
-    const chatMessagesContainer = chatWindow.querySelector('.chat-messages');
-
-    // Join the chat room
-    socket.emit('join', { senderUserId, recipientUserId });
+    chatWindow.innerHTML = `<h3>Chat with ${recipientUsername}</h3>`;
+    
+      
+    
+    // Join the chat room when the user opens the chat window
+    socket.emit('join', { senderUserId, recipientUserId }); // Send both user IDs to the server
 
     try {
         const messages = await fetchAPI(`/chats/${senderUserId}/${recipientUserId}`);
         if (messages.length === 0) {
-            chatMessagesContainer.innerHTML = '<p>No messages yet.</p>';
-            return;
+            chatWindow.innerHTML += '<p>No messages yet.</p>';
         }
+        messages.forEach((message) => displayMessage(message, message.sender === senderUserId));
 
-        // Display each message
-        messages.forEach((message) => {
-            const isSelf = message.sender._id === senderUserId;
-            displayMessage(message, isSelf);
-        });
-
-        // Mark messages as read
-        markMessagesAsRead();
+        // Mark messages as read after loading
+        // markMessagesAsRead();  // Ensure this is called to mark messages as read
 
     } catch (error) {
         console.error('Error loading chat messages:', error.message);
-        chatMessagesContainer.innerHTML = '<p>Error loading messages. Please try again later.</p>';
+        chatWindow.innerHTML += '<p>Error loading messages. Please try again later.</p>';
     }
-
-
-
 
     // Show block button if user is not the current user
     if (senderUserId !== recipientUserId) {
@@ -150,21 +198,10 @@ function displayMessage(message, isSelf) {
     messageText.textContent = message.message;
 
     // Create the timestamp element
-		    const formattedDate = new Date(message.timestamp).toLocaleDateString([], {
-		    year: 'numeric',
-		    month: 'short',
-		    day: 'numeric'
-		});	
-		const formattedTime = new Date(message.timestamp).toLocaleTimeString([], {
-		    hour: '2-digit',
-		    minute: '2-digit',
-		    second: '2-digit'
-		});
-	const formattedDateTime = `${formattedDate}, ${formattedTime}`;
-//    const formattedTime = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit'  });
+    const formattedTime = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const timestamp = document.createElement('span');
     timestamp.classList.add('timestamp');
-    timestamp.textContent = formattedDateTime;
+    timestamp.textContent = formattedTime;
 
     // Append message text and timestamp to the message div
     messageDiv.appendChild(messageText);
@@ -281,48 +318,7 @@ socket.on('userOffline', (userId) => {
 });
 
 //10. Read Status 
-// Function to mark messages as read
-async function markMessagesAsRead(senderId, receiverId) {
-    try {
-        const response = await fetchAPI('/chats/mark-read', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('jwt')}`, // Add your JWT token here
-            },
-            body: JSON.stringify({
-                senderId: senderId,
-                receiverId: receiverId,
-            }),
-        });
 
-        const data = await response.json();
-
-        if (response.ok) {
-            console.log('Messages marked as read:', data.updatedMessages);
-            // Update UI: mark messages as read
-            updateMessageStatusToRead(senderId, receiverId); // Implement this function to update message status in the UI
-        } else {
-            console.error('Failed to mark messages as read:', data.error);
-        }
-    } catch (error) {
-        console.error('Error marking messages as read:', error);
-    }
-}
-
-// Function to update the message status in the UI
-function updateMessageStatusToRead(senderId, receiverId) {
-    // Loop through the chat messages in the UI and update those sent by senderId to receiverId as read
-    const messageElements = document.querySelectorAll('.message');
-    messageElements.forEach((messageElement) => {
-        const messageSenderId = messageElement.dataset.senderId;
-        const messageReceiverId = messageElement.dataset.receiverId;
-
-        if (messageSenderId === senderId && messageReceiverId === receiverId) {
-            messageElement.classList.add('read'); // Mark message as read visually (e.g., add 'read' class)
-        }
-    });
-}
 
 
 // Event Listeners
@@ -330,44 +326,6 @@ sendButton.addEventListener('click', sendMessage);
 messageInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-
- 
-    // Dynamically set the viewport height for better compatibility
-    function setViewportHeight() {
-      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-    }
-
-    window.addEventListener('resize', setViewportHeight);
-    setViewportHeight();
- 
-
-
-
-
-
-// Function to toggle between panels
-function showChatPanel() {
-    document.querySelector('.chat-container').classList.add('show-chat');
-}
-
-function showUserListPanel() {
-    document.querySelector('.chat-container').classList.remove('show-chat');
-}
-
-// Add click handlers for toggling
-document.querySelector('#chat-list').addEventListener('click', (e) => {
-    if (window.innerWidth <= 768) {
-        showChatPanel(); // Switch to chat panel on user click
-    }
-});
-
-document.querySelector('#chat-user').addEventListener('click', (e) => {
-    if (window.innerWidth <= 768) {
-        showUserListPanel(); // Switch back to user list when clicking the chat header
-    }
-});
-
-
 
 // Initialize Chat
 loadChatList();

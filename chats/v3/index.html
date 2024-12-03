@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-height, initial-scale=1.0, user-scalable=no">
+  <title>Modern Chat App</title>
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Left Panel -->
+    <aside class="left-panel">
+      <header class="user-info">
+        <img src="/nihongo/img/user.png" alt="Current User" class="avatar">
+        <div>
+          <h3 id="myUsername">Current User</h3>
+          <span class="status online">Online</span>
+        </div>
+        <button class="settings-btn">⚙</button>
+      </header>
+      <div class="search-bar">
+             <input id="search-users" type="text" placeholder="Search users..." />
+      </div>
+            <div id="chat-list" class="chat-list">
+                <!-- User items will be dynamically loaded here -->
+            </div>
+
+    </aside>
+
+
+
+
+        
+    <!-- Chat Window -->
+    <main id="chat-window" class="chat-window">
+      <header class="chat-header">
+        <img src="/nihongo/img/dp/icon.png" alt="User 2" class="avatar">
+        <h4 id="opUsername">Curren</h4>
+        <button id=block-button" class="block-btn">Block</button>
+      </header>
+                <div class="chat-header">
+                    <h3 id="chat-user">Select a user to chat</h3>
+                    <button id="block-button" class="block-button" style="display: none;">Block</button>
+                </div>
+                <div id="messages" class="messages">
+				          
+                    <!-- Messages will be dynamically loaded here -->
+                </div>
+                <div id="typing-indicator" class="typing-indicator" style="display: none;">User is typing...</div>
+            </div>
+            <div class="message-input-area">
+            	<footer class="chat-input">
+                   <input id="message-input" type="text" placeholder="Type a message..." />
+                 <button id="send-button" class="send-btn">Send</button>
+              </footer>
+                
+            </div>
+            
+            
+      
+      
+    </main>
+    
+     <script>
+    // Dynamically set the viewport height for better compatibility
+    function setViewportHeight() {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    }
+
+    window.addEventListener('resize', setViewportHeight);
+    setViewportHeight();
+  </script>
+  
+  </div>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

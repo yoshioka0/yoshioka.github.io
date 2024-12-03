@@ -3,21 +3,52 @@ body {
     margin: 0;
     font-family: 'Arial', sans-serif;
     background-color: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 
-/* Chat Container */
+
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  
+}
+
+:root {
+  --primary: #4a90e2;
+  --primary-light: #a6c9f6;
+  --primary-dark: #3174b2;
+  --background: #ffffff;
+  --background-alt: #f5f5f5;
+  --text-main: #2c2c2c;
+  --text-secondary: #757575;
+  --border-color: #e0e0e0;
+  --vh: 1vh;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.username {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+}
+
+/* Main Container */
 .chat-container {
-    display: flex;
-    width: 90%;
-    height: 90%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: pink;
+  display: flex;
+  flex-direction: row;
+  height: calc(var(--vh) * 100);
+  width: 100vw;
+  overflow: hidden;
+  background-color: pink;
 }
 
 /* Left Panel */
@@ -77,7 +108,7 @@ body {
     border-radius: 5px;
     color: #fff;
     cursor: pointer;
-    margin-top: 10px;
+    margin: 20px ;
 }
 
 .logout-button:hover {
@@ -95,15 +126,25 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 15px;
+    padding: 0p15px;
     overflow-y: auto;
     border-left: 1px solid #ddd;
 }
 
 .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    position: sticky; /* Keeps it fixed at the top */
+    top: 0; /* Fixes it to the top of the chat window */
+    background-color: #FFA6D0; /* Background color for the header */
+    z-index: 10; /* Ensures it stays above other content */
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.chat-messages {
+    padding: 10px;
+    overflow-y: auto;
+    max-height: calc(100% - 50px); /* Adjust height to avoid overlapping the header */
 }
 
 .block-button {
@@ -119,29 +160,28 @@ body {
     background-color: #d32f2f;
 }
 
-.messages {
-    flex: 1;
-    margin: 15px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+
 
 /* Message Cards */
 .message {
+    min-width: 30%;
     max-width: 60%;
     padding: 10px;
     border-radius: 10px;
     word-wrap: break-word;
     position: relative;
+    margin: 5px 10px;
+    
 }
 
 .message.self {
     background-color: #daf8cb;
     align-self: flex-end;
+   
 }
 
 .message.other {
+		
     background-color: #e4e6eb;
     align-self: flex-start;
 }
@@ -169,21 +209,66 @@ body {
 .message-input-area input {
     flex: 1;
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 10px;
     border: 1px solid #ccc;
     outline: none;
 }
 
 .message-input-area button {
-    background-color: #4caf50;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 50%;
-    color: #fff;
     cursor: pointer;
-    margin-left: 10px;
+	color: #0078D7;
+	font-weight: bold;
+	font-size: 1rem;
+	display: inline-block;
+	padding: 10px 15px;
+	border: 2px solid #0078D7;
+	border-radius: 10px;
+	transition: all 0.3s;  
+	margin-left: 10px;
 }
 
 .message-input-area button:hover {
-    background-color: #43a047;
+  background-color: #0078D7;
+   color: #fff;
+}
+
+
+/*. ################## *l/
+
+
+
+/* Default two-panel layout for larger screens */
+
+/* Responsive layout for smaller screens (width <= 768px) */
+@media screen and (max-width: 768px) {
+    .chat-container {
+        display: block;
+        position: relative;
+        
+    }
+
+    .left-panel,
+    .right-panel {
+        width: 100%;
+        height: calc(var(--vh) * 100);
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(0); /* Initially show the left panel */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .right-panel {
+        transform: translateX(100%); /* Hide the right panel by default */
+    }
+
+    .chat-container.show-chat .left-panel {
+        transform: translateX(-100%); /* Move the left panel out of view */
+    }
+
+    .chat-container.show-chat .right-panel {
+        transform: translateX(0); /* Show the right panel */
+    }
+
+
 }

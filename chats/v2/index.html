@@ -4,27 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="chat.css">
-    <title>Chat Page</title>
+  <script src="/nihongo/auth-v2.js"></script>
+     <script src="/nihongo/config.js"></script>
+    <title>Nihongo Chats</title>
 </head>
 <body>
+		 <!-- Noscript message: if JavaScript is disabled, redirect user -->
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=/nihongo/js-disabled.html" />
+  </noscript>
 	
 	
     <div class="chat-container">
         <!-- Left Panel: User List -->
         <div class="left-panel">
             <div class="header">
-                <h2>Chats</h2>
-                         <div class="profile">
-                <img src="/nihongo/img/null.png" alt="Profile">
-        
-                <p id="myUsername">Your Username</p> <!-- Dynamically populate this in chat.js -->
+                <h2>Nihongo Chats</h2>
+                <div class="profile">
+                <img class="avatar" src="/nihongo/img/user.png" alt="Profile">
+                <p id="myUsername" class="username">Your Username</p> <!-- Dynamically populate this in chat.js -->
             </div>
-                <input id="search-users" type="text" placeholder="Search users..." />
+                <input id="search-users" type="text" placeholder="Search users..." oninput="searchUsers()" />
             </div>
             <div id="chat-list" class="chat-list">
                 <!-- User items will be dynamically loaded here -->
             </div>
-            <button id="logoutBtn" class="logout-button">Logout</button>
+            <button id="logoutBtn" class="logout-button" onclick=logout() >Logout</button>
         </div>
 
         <!-- Right Panel: Chat Window -->
@@ -46,6 +51,15 @@
         </div>
     </div>
     
+    <script>
+    // Dynamically set the viewport height for better compatibility
+    function setViewportHeight() {
+      document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+    }
+
+    window.addEventListener('resize', setViewportHeight);
+    setViewportHeight();
+  </script>
  
     
     <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
