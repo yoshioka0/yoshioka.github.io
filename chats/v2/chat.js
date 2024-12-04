@@ -230,6 +230,8 @@ function displayNotification(message) {
 
 // 6. Handle Typing Indicator
 let typingTimeout;
+const typingIndicator = document.getElementById('typing-indicator'); // Get the existing typing indicator element
+
 messageInput.addEventListener('input', () => {
     if (currentChatUserId && senderUserId !== currentChatUserId) {
         socket.emit('typing', { senderId: senderUserId, receiverId: currentChatUserId });
@@ -237,24 +239,19 @@ messageInput.addEventListener('input', () => {
     clearTimeout(typingTimeout); // Reset typing timeout
     typingTimeout = setTimeout(() => {
         // Hide typing indicator if no more typing happens after 3 seconds
-        let typingIndicator = document.querySelector('.typing-indicator');
-        if (typingIndicator) typingIndicator.remove();
+        typingIndicator.style.display = 'none';
     }, 3000);
 });
 
 // 7. Typing Indicator Display
 socket.on('typing', ({ senderId }) => {
     if (senderId !== senderUserId && currentChatUserId === senderUserId) {
-        // Create or update the typing indicator
-        let typingIndicator = document.querySelector('.typing-indicator');
-        if (!typingIndicator) {
-            typingIndicator = document.createElement('div');
-            typingIndicator.classList.add('typing-indicator');
-            chatWindow.appendChild(typingIndicator);
-        }
-        typingIndicator.textContent = 'User is typing...';
+        // Show the typing indicator if the other user is typing
+        typingIndicator.style.display = 'block';
+        typingIndicator.textContent = '$(recipientUsername) is typing...';
     }
 });
+
 
 // 8. Block User
 async function blockUser(recipientUserId) {
