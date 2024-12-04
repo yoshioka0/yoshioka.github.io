@@ -260,7 +260,7 @@ async function blockUser(recipientUserId) {
         };
 
         // Sending the request to the server with the correct endpoint and data
-        const response = await fetchAPI('/chats/block-user', {
+        const response = await fetch('https://nihongo-backend.onrender.com/chats/block-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ socket.on('userOffline', (userId) => {
 // Function to mark messages as read
 async function markMessagesAsRead(senderId, receiverId) {
     try {
-        const response = await fetchAPI('/chats/mark-read', {
+        const response = await fetch('https://nihongo-backend.onrender.com/chats/mark-read', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
