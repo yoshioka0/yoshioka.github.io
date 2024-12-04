@@ -94,8 +94,8 @@ function searchUsers() {
 async function openChat(recipientUserId, recipientUsername) {
     currentChatUserId = recipientUserId;
     currentChatUsername = recipientUsername;
-
-		document.getElementById("chat-user").textContent = "💬 Chatting with "${recipientUsername};
+			
+			document.getElementById("chat-user").textContent = `💬 Chatting with ${recipientUsername}`;
     // Clear the chat window and add a fixed header
     chatWindow.innerHTML = `
         <div class="chat-messages"></div> 
