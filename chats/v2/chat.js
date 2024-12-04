@@ -254,14 +254,30 @@ socket.on('typing', ({ senderId }) => {
 // 8. Block User
 async function blockUser(recipientUserId) {
     try {
-        const response = await fetchAPI(`/chats/block/${currentChatUserId}`, 'POST');
-        if (response.success) {
+        // Constructing the request body with the blockUserId
+        const requestBody = {
+            blockUserId: recipientUserId // The ID of the user to block
+        };
+
+        // Sending the request to the server with the correct endpoint and data
+        const response = await fetchAPI('/chats/block-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming the token is stored in localStorage
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
             alert('User has been blocked.');
             // Optionally remove the user from the chat list or close the chat
             chatWindow.innerHTML = '<p>You have blocked this user.</p>';
             blockButton.style.display = 'none';
         } else {
-            alert('Error blocking user.');
+            alert(data.error || 'Error blocking user.');
         }
     } catch (error) {
         console.error('Error blocking user:', error.message);
