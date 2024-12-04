@@ -34,16 +34,18 @@
 
         <!-- Right Panel: Chat Window -->
         <div class="right-panel">
-            <div id="chat-window" class="chat-window">
-                <div class="chat-header">
-                    <h3 id="chat-user">Select a user to chat</h3>
-                    <button id="block-button" class="block-button" style="display: none;">Block</button>
+								<div class="chat-header">
+                <h3 id="chat-user">Select a user to chat</h3>
+                <button id="block-button" class="block-button" style="display: none;">Block</button>
                 </div>
+
+            <div id="chat-window" class="chat-window">
                 <div id="messages" class="messages">
                     <!-- Messages will be dynamically loaded here -->
-                </div>
-                <div id="typing-indicator" class="typing-indicator" style="display: none;">User is typing...</div>
+                </div>   
             </div>
+						
+								<div id="typing-indicator" class="typing-indicator" style="display: none;">User is typing...</div>
             <div class="message-input-area">
                 <input id="message-input" type="text" placeholder="Type a message..." />
                 <button id="send-button">Send</button>
