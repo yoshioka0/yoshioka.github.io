@@ -256,7 +256,7 @@ socket.on('typing', ({ senderId }) => {
 // 8. Block User
 async function blockUser(recipientUserId) {
     try {
-        const response = await fetchAPI(`/chats/block/${senderUserId}/${recipientUserId}`, 'POST');
+        const response = await fetchAPI(`/chats/block/${senderUserId}/${currentChatUserId}`, 'POST');
         if (response.success) {
             alert('User has been blocked.');
             // Optionally remove the user from the chat list or close the chat
