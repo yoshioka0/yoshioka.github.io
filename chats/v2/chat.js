@@ -100,7 +100,10 @@ async function openChat(recipientUserId, recipientUsername) {
         <div  id="chat-header" class="chat-header">
             <h3>Chat with ${recipientUsername}</h3>
         </div>
-        <div class="chat-messages"></div>  `;
+        <div class="chat-messages"></div>  
+				 <div id="typing-indicator" class="typing-indicator" style="display: none;"> ${recipientUsername} is typing...</div>
+
+					`;
 
     const chatMessagesContainer = chatWindow.querySelector('.chat-messages');
 
