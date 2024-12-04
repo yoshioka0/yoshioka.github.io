@@ -227,10 +227,10 @@ function displayNotification(message) {
     }, 5000); // Hide after 5 seconds
 }
 
-// 6. Handle Typing Indicator (Optional)
+// 6. Handle Typing Indicator
 let typingTimeout;
 messageInput.addEventListener('input', () => {
-    if (currentChatUserId) {
+    if (currentChatUserId && senderUserId !== currentChatUserId) {
         socket.emit('typing', { senderId: senderUserId, receiverId: currentChatUserId });
     }
     clearTimeout(typingTimeout); // Reset typing timeout
@@ -241,7 +241,7 @@ messageInput.addEventListener('input', () => {
     }, 3000);
 });
 
-// 7. Typing Indicator Display (Optional)
+// 7. Typing Indicator Display
 socket.on('typing', ({ senderId }) => {
     if (senderId !== senderUserId && currentChatUserId === senderUserId) {
         // Create or update the typing indicator
