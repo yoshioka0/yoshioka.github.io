@@ -259,6 +259,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Function to sanitize inputs
+function sanitizeInput(input) {
+    let sanitized = input.trim();
+    sanitized = sanitized.replace(/<script.*?>.*?<\/script>/gi, ''); // Remove script tags
+    sanitized = sanitized.replace(/<.*?>/g, ''); // Remove HTML tags
+    sanitized = sanitized.replace(/&/g, '&amp;'); // Encode special characters
+    sanitized = sanitized.replace(/</g, '&lt;');
+    sanitized = sanitized.replace(/>/g, '&gt;');
+    sanitized = sanitized.replace(/"/g, '&quot;');
+    sanitized = sanitized.replace(/'/g, '&#39;');
+    return sanitized;
+}
+
+
 // login and sign-up text listen
 const loginHere = document.getElementById("login-here");
 const signupHere = document.getElementById("signup-here");
@@ -326,6 +340,9 @@ if (window.location.pathname === '/nihongo/') {
         const password = document.getElementById('signup-password').value.trim();
         const errorMessageId = 'signupErrorMessage';
 
+	username = sanitizeInput(username);
+	password = sanitizeInput(password);
+
         if (!username || !password) {
             showErrorMessage(errorMessageId, 'Please enter both username and password.');
             return;
@@ -373,6 +390,9 @@ if (window.location.pathname === '/nihongo/') {
         const password = document.getElementById('login-password').value.trim();
         const errorMessageId = 'loginErrorMessage';
 
+	username = sanitizeInput(username);
+	password = sanitizeInput(password);
+	    
         if (!username || !password) {
             showErrorMessage(errorMessageId, 'Please enter both username and password.');
             return;
