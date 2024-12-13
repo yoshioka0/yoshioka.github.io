@@ -297,25 +297,46 @@ if (window.location.pathname === '/nihongo/') {
                     event.preventDefault();
 
                     const username = document.getElementById('signup-username').value.trim();
-                    const password = document.getElementById('signup-password').value;
+                    const password = document.getElementById('signup-password').value.trim();
                     const errorMessage = document.getElementById('signupErrorMessage'); 
-                    errorMessage.textContent = 'Creating Account, Please Wait...';
-
-                    // Only get Turnstile token if not in local environment
+                    
+                  // Only get Turnstile token if not in local environment
                     let turnstileResponse = null;
                     if (!isLocalHost()) {
-                    document.getElementById('turnstile1').className = 'cf-turnstile';
-                    const turnstileElement = document.querySelector('.cf-turnstile');
-                                if (!turnstileElement) {
-                                    console.error('Turnstile element not found');
-                                    errorMessage.textContent = 'Captcha not found, Reload the page.';
-                                    return;
-                                }
-                    }
+				    const turnstileContainer = document.getElementById('turnstile1');
+				 // Add the Turnstile class
+				    turnstileContainer.className = 'cf-turnstile';
+				
+				    if (!turnstileContainer) {
+				        console.error('Turnstile container not found');
+				        errorMessage.textContent = 'Captcha container not found. Reload the page.';
+				        return;
+				    }
+				
+				    // Dynamically render the Turnstile widget
+				    try {
+				        turnstile.render('#turnstile1', {
+				            sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX', // Turnstile site key
+				            callback: (token) => {
+				                console.log('Turnstile Token:', token);
+				            },
+				        });
+				    } catch (e) {
+				        console.error('Error rendering Turnstile:', e);
+				        errorMessage.textContent = 'Captcha initialization failed. Reload the page.';
+				    }
+				}
+				
+				const turnstileResponse = turnstile.getResponse('turnstile1');
+				if (!turnstileResponse) {
+  			  errorMessage.textContent = 'Please complete the captcha.';
+  			  return;
+			}
 
                     try {
-                                const turnstileResponse = turnstile.getResponse(turnstile1);
-                                const response = await fetch(`${BASE_URL}/create-user`, {
+                    		errorMessage.textContent = 'Creating Account, Please Wait...';
+                            const turnstileResponse = turnstile.getResponse(turnstile1);
+                            const response = await fetch(`${BASE_URL}/create-user`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
@@ -342,9 +363,8 @@ if (window.location.pathname === '/nihongo/') {
                     event.preventDefault();
 
                     const username = document.getElementById('login-username').value.trim();
-                    const password = document.getElementById('login-password').value;
+                    const password = document.getElementById('login-password').value.trim();
                     const errorMessage = document.getElementById('loginErrorMessage');
-                    errorMessage.textContent = 'Logging In, Please Wait...';
 
                     if (!username || !password) {
                         errorMessage.textContent = 'Please enter both username and password.';
@@ -354,17 +374,39 @@ if (window.location.pathname === '/nihongo/') {
                   // Only get Turnstile token if not in local environment
                     let turnstileResponse = null;
                     if (!isLocalHost()) {
-                    document.getElementById('turnstile2').className = 'cf-turnstile';
-                    const turnstileElement = document.querySelector('.cf-turnstile');
-                                if (!turnstileElement) {
-                                    console.error('Turnstile element not found');
-                                    errorMessage.textContent = 'Captcha not found, Reload the page.';
-                                    return;
-                                }
-                    }
-
+				    const turnstileContainer = document.getElementById('turnstile2');
+				 // Add the Turnstile class
+				    turnstileContainer.className = 'cf-turnstile';
+				
+				    if (!turnstileContainer) {
+				        console.error('Turnstile container not found');
+				        errorMessage.textContent = 'Captcha container not found. Reload the page.';
+				        return;
+				    }
+				
+				    // Dynamically render the Turnstile widget
+				    try {
+				        turnstile.render('#turnstile2', {
+				            sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX', // Turnstile site key
+				            callback: (token) => {
+				                console.log('Turnstile Token:', token);
+				            },
+				        });
+				    } catch (e) {
+				        console.error('Error rendering Turnstile:', e);
+				        errorMessage.textContent = 'Captcha initialization failed. Reload the page.';
+				    }
+				}
+				
+				const turnstileResponse = turnstile.getResponse('turnstile2');
+				if (!turnstileResponse) {
+  			  errorMessage.textContent = 'Please complete the captcha.';
+  			  return;
+			}
+				
                     try {
-                         const turnstileResponse = turnstile.getResponse(turnstile2);
+                    	errorMessage.textContent = 'Logging In, Please Wait...';
+                        const turnstileResponse = turnstile.getResponse(turnstile2);
                         const response = await fetch(`${BASE_URL}/login`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
