@@ -305,8 +305,8 @@ function loadCaptcha(captchaElementId) {
     if (!captchaLoaded) {
         const captchaElement = document.getElementById(captchaElementId);
         if (captchaElement) {
-            captchaElement.classList.remove('cf-turnstile'); // Initially hide captcha
-            captchaElement.classList.add('cf-turnstile'); // Show captcha smoothly
+//            captchaElement.classList.remove('cf-turnstile-invisible'); // Initially hide captcha
+//            captchaElement.classList.add('cf-turnstile'); // Show captcha smoothly
             captchaLoaded = true; // Mark captcha as loaded
         }
     }
