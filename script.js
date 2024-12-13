@@ -306,7 +306,7 @@ function loadCaptcha(captchaElementId) {
         const captchaElement = document.getElementById(captchaElementId);
         if (captchaElement) {
             captchaElement.classList.remove('cf-turnstile'); // Initially hide captcha
-            captchaElement.classList.add('cf-turnstile-visible'); // Show captcha smoothly
+            captchaElement.classList.add('cf-turnstile'); // Show captcha smoothly
             captchaLoaded = true; // Mark captcha as loaded
         }
     }
@@ -355,7 +355,7 @@ if (window.location.pathname === '/nihongo/') {
             loadCaptcha('turnstile1'); // Dynamically load captcha on form submission
             turnstileResponse = getTurnstileToken('turnstile1');
             if (!turnstileResponse) {
-                showErrorMessage(errorMessageId, 'Turnstile verification failed.');
+                showErrorMessage(errorMessageId, 'Captcha Response failed.');
                 return;
             }
         }
@@ -405,7 +405,7 @@ if (window.location.pathname === '/nihongo/') {
             loadCaptcha('turnstile2'); // Dynamically load captcha on form submission
             turnstileResponse = getTurnstileToken('turnstile2');
             if (!turnstileResponse) {
-                showErrorMessage(errorMessageId, 'Turnstile verification failed.');
+                showErrorMessage(errorMessageId, 'Captcha Response failed.');
                 return;
             }
         }
