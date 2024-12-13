@@ -336,8 +336,8 @@ if (window.location.pathname === '/nihongo/') {
     // Handle Signup Form Submission
     document.getElementById('signup-form').addEventListener('submit', async (event) => {
         event.preventDefault();
-        const username = document.getElementById('signup-username').value.trim();
-        const password = document.getElementById('signup-password').value.trim();
+        let username = document.getElementById('signup-username').value.trim();
+        let password = document.getElementById('signup-password').value.trim();
         const errorMessageId = 'signupErrorMessage';
 
 	username = sanitizeInput(username);
@@ -386,8 +386,8 @@ if (window.location.pathname === '/nihongo/') {
     // Handle Login Form Submission
     document.getElementById('login-form').addEventListener('submit', async (event) => {
         event.preventDefault();
-        const username = document.getElementById('login-username').value.trim();
-        const password = document.getElementById('login-password').value.trim();
+        let username = document.getElementById('login-username').value.trim();
+        let password = document.getElementById('login-password').value.trim();
         const errorMessageId = 'loginErrorMessage';
 
 	username = sanitizeInput(username);
