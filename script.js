@@ -289,14 +289,14 @@ if (window.location.pathname === '/nihongo/') {
         return passwordRegex.test(password);
     }
 
-    // Function to render Turnstile manually
-    function renderTurnstile(captchaId) {
+    // Function to render Turnstile manually and get the response
+    function renderTurnstile(captchaId, callback) {
         const turnstileContainer = document.getElementById(captchaId);
         if (!turnstileContainer) {
             console.error('Turnstile container not found');
             return;
         }
-        
+
         // Add Turnstile class to make it visible
         turnstileContainer.className = 'cf-turnstile';
 
@@ -306,6 +306,7 @@ if (window.location.pathname === '/nihongo/') {
                 sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX', // Turnstile site key
                 callback: (token) => {
                     console.log('Turnstile Token:', token);
+                    callback(token); // Call the callback with the token once rendered
                 },
             });
         } catch (e) {
@@ -342,41 +343,40 @@ if (window.location.pathname === '/nihongo/') {
         }
 
         // Render Turnstile captcha before making the request
-        renderTurnstile('turnstile1');
-        const turnstileResponse = turnstile.getResponse('turnstile1');
-
-        if (!turnstileResponse) {
-            errorMessage.textContent = 'Please complete the captcha.';
-            return;
-        }
-
-        try {
-            errorMessage.textContent = 'Creating Account, Please Wait...';
-            const response = await fetch(`${BASE_URL}/create-user`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
-            });
-            const data = await response.json();
-            if (response.ok) {
-                localStorage.setItem('jwt', data.token);
-                console.log('JWT Token:', data.token);
-                updateActiveUser();
-                alert(`User created successfully! (${username})`);
-                document.getElementById('signup-modal').style.display = 'none';
-                location.reload();
-            } else {
-                errorMessage.textContent = data.error || 'Something went wrong!';
-                // Reset Turnstile captcha
-                turnstile.reset('turnstile1');
-                renderTurnstile('turnstile1'); // Re-render captcha
+        renderTurnstile('turnstile1', async (turnstileResponse) => {
+            if (!turnstileResponse) {
+                errorMessage.textContent = 'Please complete the captcha.';
+                return;
             }
-        } catch (error) {
-            console.error('Error:', error);
-            errorMessage.textContent = 'Error connecting to the server. Please try again.';
-            turnstile.reset('turnstile1');
-            renderTurnstile('turnstile1'); // Re-render captcha
-        }
+
+            try {
+                errorMessage.textContent = 'Creating Account, Please Wait...';
+                const response = await fetch(`${BASE_URL}/create-user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('jwt', data.token);
+                    console.log('JWT Token:', data.token);
+                    updateActiveUser();
+                    alert(`User created successfully! (${username})`);
+                    document.getElementById('signup-modal').style.display = 'none';
+                    location.reload();
+                } else {
+                    errorMessage.textContent = data.error || 'Something went wrong!';
+                    // Reset Turnstile captcha
+                    turnstile.reset('turnstile1');
+                    renderTurnstile('turnstile1', () => {}); // Re-render captcha for the next attempt
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Error connecting to the server. Please try again.';
+                turnstile.reset('turnstile1');
+                renderTurnstile('turnstile1', () => {}); // Re-render captcha for the next attempt
+            }
+        });
     });
 
     // Login Form Submission
@@ -393,41 +393,40 @@ if (window.location.pathname === '/nihongo/') {
         }
 
         // Render Turnstile captcha before making the request
-        renderTurnstile('turnstile2');
-        const turnstileResponse = turnstile.getResponse('turnstile2');
-
-        if (!turnstileResponse) {
-            errorMessage.textContent = 'Please complete the captcha.';
-            return;
-        }
-
-        try {
-            errorMessage.textContent = 'Logging In, Please Wait...';
-            const response = await fetch(`${BASE_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
-            });
-            const data = await response.json();        
-            if (response.ok) {
-                localStorage.setItem('jwt', data.token);
-                console.log('JWT Token:', data.token);
-                updateActiveUser();
-                alert(`Welcome back, ${username}!`);
-                document.getElementById('login-modal').style.display = 'none';
-                location.reload();
-            } else {
-                errorMessage.textContent = data.error || 'Invalid username or password.';
-                // Reset Turnstile captcha
-                turnstile.reset('turnstile2');
-                renderTurnstile('turnstile2'); // Re-render captcha
+        renderTurnstile('turnstile2', async (turnstileResponse) => {
+            if (!turnstileResponse) {
+                errorMessage.textContent = 'Please complete the captcha.';
+                return;
             }
-        } catch (error) {
-            console.error('Error:', error);
-            errorMessage.textContent = 'Error connecting to the server. Please try again.';
-            turnstile.reset('turnstile2');
-            renderTurnstile('turnstile2'); // Re-render captcha
-        }
+
+            try {
+                errorMessage.textContent = 'Logging In, Please Wait...';
+                const response = await fetch(`${BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
+                });
+                const data = await response.json();        
+                if (response.ok) {
+                    localStorage.setItem('jwt', data.token);
+                    console.log('JWT Token:', data.token);
+                    updateActiveUser();
+                    alert(`Welcome back, ${username}!`);
+                    document.getElementById('login-modal').style.display = 'none';
+                    location.reload();
+                } else {
+                    errorMessage.textContent = data.error || 'Invalid username or password.';
+                    // Reset Turnstile captcha
+                    turnstile.reset('turnstile2');
+                    renderTurnstile('turnstile2', () => {}); // Re-render captcha for the next attempt
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Error connecting to the server. Please try again.';
+                turnstile.reset('turnstile2');
+                renderTurnstile('turnstile2', () => {}); // Re-render captcha for the next attempt
+            }
+        });
     });
 }
 
