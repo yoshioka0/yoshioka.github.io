@@ -327,7 +327,7 @@ if (window.location.pathname === '/nihongo/') {
 				    }
 				}
 				
-				const turnstileResponse = turnstile.getResponse('turnstile1');
+				turnstileResponse = turnstile.getResponse('turnstile1');
 				if (!turnstileResponse) {
   			  errorMessage.textContent = 'Please complete the captcha.';
   			  return;
@@ -398,7 +398,7 @@ if (window.location.pathname === '/nihongo/') {
 				    }
 				}
 				
-				const turnstileResponse = turnstile.getResponse('turnstile2');
+				turnstileResponse = turnstile.getResponse('turnstile2');
 				if (!turnstileResponse) {
   			  errorMessage.textContent = 'Please complete the captcha.';
   			  return;
