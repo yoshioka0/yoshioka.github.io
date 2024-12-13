@@ -260,129 +260,158 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // login and sign-up text listen
-
 const loginHere = document.getElementById("login-here");
 const signupHere = document.getElementById("signup-here");
+let captchaLoaded = false; // Track whether the captcha has been loaded
 
-// Add a click event listener
+// Utility: Check if the environment is local
+function isLocalHost() {
+    const hostname = window.location.hostname;
+    return hostname === '' || hostname === '127.0.0.1' || hostname.startsWith('192.168.');
+}
+
+// Utility: Display error message
+function showErrorMessage(elementId, message) {
+    const errorMessage = document.getElementById(elementId);
+    if (errorMessage) errorMessage.textContent = message;
+}
+
+// Utility: Get Turnstile token
+function getTurnstileToken(elementId) {
+    const turnstileElement = document.getElementById(elementId);
+    if (!turnstileElement) {
+        console.error(`Turnstile element with ID "${elementId}" not found.`);
+        return null;
+    }
+    return turnstile.getResponse(turnstileElement);
+}
+
+// Utility: Load captcha dynamically
+function loadCaptcha(captchaElementId) {
+    if (!captchaLoaded) {
+        const captchaElement = document.getElementById(captchaElementId);
+        if (captchaElement) {
+            captchaElement.classList.remove('cf-turnstile'); // Initially hide captcha
+            captchaElement.classList.add('cf-turnstile-visible'); // Show captcha smoothly
+            captchaLoaded = true; // Mark captcha as loaded
+        }
+    }
+}
+
+// Toggle between Login and Signup modals
 if (window.location.pathname === '/nihongo/') {
+    loginHere.addEventListener("click", () => {
+        document.getElementById("login-modal").style.display = "flex";
+        document.getElementById("signup-modal").style.display = "none";
+        captchaLoaded = false; // Reset captcha load state on switching to login
+    });
 
-                loginHere.addEventListener("click", () => {
-                document.getElementById("login-modal").style.display = "flex";
-                document.getElementById("signup-modal").style.display = "none";
-                });
-                signupHere.addEventListener("click", () => {
-                document.getElementById("signup-modal").style.display = "flex";
-                document.getElementById("login-modal").style.display = "none";
-                });
+    signupHere.addEventListener("click", () => {
+        document.getElementById("signup-modal").style.display = "flex";
+        document.getElementById("login-modal").style.display = "none";
+        captchaLoaded = false; // Reset captcha load state on switching to signup
+    });
 
+    // Display local environment message
+    if (isLocalHost()) {
+        showErrorMessage('loginErrorMessage', 'Using Local Environment, Skipping Turnstile Verification');
+        showErrorMessage('signupErrorMessage', 'Using Local Environment, Skipping Turnstile Verification');
+        console.log('Using Local Environment, Skipping Turnstile Verification');
+    }
 
+    // Handle Signup Form Submission
+    document.getElementById('signup-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('signup-username').value.trim();
+        const password = document.getElementById('signup-password').value.trim();
+        const errorMessageId = 'signupErrorMessage';
 
-                // Helper function to check if the hostname is local
-                function isLocalHost() {
-                    const hostname = window.location.hostname;
-                    return hostname === '' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
-                }
-                if (isLocalHost()) {
-                        const errorMessage = document.getElementById('loginErrorMessage');
-                        const errorMessage2 = document.getElementById('signupErrorMessage'); 
-                        errorMessage.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-                        errorMessage2.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-                        console.log('Using Local Environment, Skipping Turnstile Verification');        
-                    }
+        if (!username || !password) {
+            showErrorMessage(errorMessageId, 'Please enter both username and password.');
+            return;
+        }
 
+        showErrorMessage(errorMessageId, 'Creating Account, Please Wait...');
+        let turnstileResponse = null;
 
-                // New User Creation
-                document.getElementById('signup-form').addEventListener('submit', async (event) => {
-                    event.preventDefault();
+        if (!isLocalHost()) {
+            loadCaptcha('turnstile1'); // Dynamically load captcha on form submission
+            turnstileResponse = getTurnstileToken('turnstile1');
+            if (!turnstileResponse) {
+                showErrorMessage(errorMessageId, 'Turnstile verification failed.');
+                return;
+            }
+        }
 
-                    const username = document.getElementById('signup-username').value.trim();
-                    const password = document.getElementById('signup-password').value;
-                    const errorMessage = document.getElementById('signupErrorMessage'); 
-                    errorMessage.textContent = 'Creating Account, Please Wait...';
+        try {
+            const response = await fetch(`${BASE_URL}/create-user`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, turnstileResponse })
+            });
 
-                    // Only get Turnstile token if not in local environment
-                    let turnstileResponse = null;
-                    if (!isLocalHost()) {
-                    const turnstileElement = document.querySelector('.cf-turnstile');
-                                if (!turnstileElement) {
-                                    console.error('Turnstile element not found');
-                                    return;
-                                }
-                    }
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('jwt', data.token);
+                console.log('JWT Token:', data.token);
+                alert(`User created successfully! (${username})`);
+                document.getElementById('signup-modal').style.display = 'none';
+                location.reload();
+            } else {
+                showErrorMessage(errorMessageId, data.error || 'Something went wrong!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorMessage(errorMessageId, 'Error connecting to the server. Please try again.');
+        }
+    });
 
-                    try {
-                                        const turnstileResponse = turnstile.getResponse(turnstile1);
-                                const response = await fetch(`${BASE_URL}/create-user`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
-                        });
-                        const data = await response.json();
-                        if (response.ok) {
-                            localStorage.setItem('jwt', data.token);
-                            console.log('JWT Token:', data.token);
-                            updateActiveUser();
-                            alert(`User created successfully! (${username})`);
-                            document.getElementById('signup-modal').style.display = 'none';
-                            location.reload();
-                        } else {
-                            errorMessage.textContent = data.error || 'Something went wrong!';
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        errorMessage.textContent = 'Error connecting to the server. Please try again.';
-                    }
-                });
+    // Handle Login Form Submission
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+        const errorMessageId = 'loginErrorMessage';
 
-                // Login Form Submission
-                document.getElementById('login-form').addEventListener('submit', async (event) => {
-                    event.preventDefault();
+        if (!username || !password) {
+            showErrorMessage(errorMessageId, 'Please enter both username and password.');
+            return;
+        }
 
-                    const username = document.getElementById('login-username').value.trim();
-                    const password = document.getElementById('login-password').value;
-                    const errorMessage = document.getElementById('loginErrorMessage');
-                    errorMessage.textContent = 'Logging In, Please Wait...';
+        showErrorMessage(errorMessageId, 'Logging In, Please Wait...');
+        let turnstileResponse = null;
 
-                    if (!username || !password) {
-                        errorMessage.textContent = 'Please enter both username and password.';
-                        return;
-                    }
+        if (!isLocalHost()) {
+            loadCaptcha('turnstile2'); // Dynamically load captcha on form submission
+            turnstileResponse = getTurnstileToken('turnstile2');
+            if (!turnstileResponse) {
+                showErrorMessage(errorMessageId, 'Turnstile verification failed.');
+                return;
+            }
+        }
 
-                  // Only get Turnstile token if not in local environment
-                    let turnstileResponse = null;
-                    if (!isLocalHost()) {
-                    const turnstileElement = document.querySelector('.cf-turnstile');
-                                if (!turnstileElement) {
-                                    console.error('Turnstile element not found');
-                                    return;
-                                }
-                    }
+        try {
+            const response = await fetch(`${BASE_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, turnstileResponse })
+            });
 
-                    try {
-                                const turnstileResponse = turnstile.getResponse(turnstile2);
-                        const response = await fetch(`${BASE_URL}/login`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
-                        });
-                        const data = await response.json();        
-                        if (response.ok) {
-                            localStorage.setItem('jwt', data.token);
-                            console.log('JWT Token:', data.token);
-                            updateActiveUser();
-                            alert(`Welcome back, ${username}!`);
-                            document.getElementById('login-modal').style.display = 'none';
-                            location.reload();
-                        } else {
-                            errorMessage.textContent = data.error || 'Invalid username or password.';
-                        }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        errorMessage.textContent = 'Error connecting to the server. Please try again.';
-                    }
-                });
-
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('jwt', data.token);
+                console.log('JWT Token:', data.token);
+                alert(`Welcome back, ${username}!`);
+                document.getElementById('login-modal').style.display = 'none';
+                location.reload();
+            } else {
+                showErrorMessage(errorMessageId, data.error || 'Invalid username or password.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showErrorMessage(errorMessageId, 'Error connecting to the server. Please try again.');
+        }
+    });
 }
 
 
