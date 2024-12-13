@@ -633,6 +633,6 @@ document.getElementById("surprise-button").addEventListener("click", function() 
   this.disabled = true; // Disable the button after clicking
 
   // Optional: Play a sound for added fun
-  // new Audio('path/to/party-sound.mp3').play();
+   new Audio('/nihongo/jingle.mp3').play();
 
 });
