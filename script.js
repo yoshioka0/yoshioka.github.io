@@ -267,9 +267,6 @@ const signupHere = document.getElementById("signup-here");
 // Add a click event listener
 if (window.location.pathname === '/nihongo/') {
 
-    // Set flags to track captcha rendering
-    let isTurnstileRendered = false;
-
     loginHere.addEventListener("click", () => {
         document.getElementById("login-modal").style.display = "flex";
         document.getElementById("signup-modal").style.display = "none";
@@ -280,21 +277,19 @@ if (window.location.pathname === '/nihongo/') {
         document.getElementById("login-modal").style.display = "none";
     });
 
-    // Helper function to check if the hostname is local
-    function isLocalHost() {
-        const hostname = window.location.hostname;
-        return hostname === '' || hostname === '127.0.0.1' || hostname === '192.168.1.7'; // Add any additional local hostnames here
+    // Helper function for username validation
+    function validateUsername(username) {
+        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/; // Allow alphanumeric and underscores with length between 3 and 20
+        return usernameRegex.test(username);
     }
 
-    if (isLocalHost()) {
-        const errorMessage = document.getElementById('loginErrorMessage');
-        const errorMessage2 = document.getElementById('signupErrorMessage'); 
-        errorMessage.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-        errorMessage2.textContent = 'Using Local Environment, Skipping Turnstile Verification';
-        console.log('Using Local Environment, Skipping Turnstile Verification');        
+    // Helper function for password validation
+    function validatePassword(password) {
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // At least 6 characters, must contain letters and numbers
+        return passwordRegex.test(password);
     }
 
-    // New User Creation
+    // New User Creation (Signup)
     document.getElementById('signup-form').addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -302,39 +297,30 @@ if (window.location.pathname === '/nihongo/') {
         const password = document.getElementById('signup-password').value.trim();
         const errorMessage = document.getElementById('signupErrorMessage'); 
 
-        // Only get Turnstile token if not in local environment
-        let turnstileResponse = null;
-        if (!isLocalHost()) {
-            const turnstileContainer = document.getElementById('turnstile1');
-
-            if (!turnstileContainer) {
-                console.error('Turnstile container not found');
-                errorMessage.textContent = 'Captcha container not found. Reload the page.';
-                return;
-            }
-
-            if (!isTurnstileRendered) {
-                // Add Turnstile class and render the captcha only if it hasn't been rendered
-                turnstileContainer.className = 'cf-turnstile';
-
-                try {
-                    turnstile.render('#turnstile1', {
-                        sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX',
-                        callback: (token) => {
-                            console.log('Turnstile Token:', token);
-                            turnstileResponse = token;
-                        },
-                    });
-                    isTurnstileRendered = true; // Set the flag to true after rendering
-                } catch (e) {
-                    console.error('Error rendering Turnstile:', e);
-                    errorMessage.textContent = 'Captcha initialization failed. Reload the page.';
-                    return;
-                }
-            }
+        // Username validation
+        if (!username) {
+            errorMessage.textContent = 'Username is required.';
+            return;
+        }
+        if (!validateUsername(username)) {
+            errorMessage.textContent = 'Username must be alphanumeric and between 3 to 20 characters.';
+            return;
         }
 
-        // Ensure the captcha is completed
+        // Password validation
+        if (!password) {
+            errorMessage.textContent = 'Password is required.';
+            return;
+        }
+        if (!validatePassword(password)) {
+            errorMessage.textContent = 'Password must be at least 6 characters long and contain both letters and numbers.';
+            return;
+        }
+
+        // Get Turnstile token for signup
+        const turnstileContainer = document.getElementById('turnstile1');
+        const turnstileResponse = turnstile.getResponse('turnstile1');
+
         if (!turnstileResponse) {
             errorMessage.textContent = 'Please complete the captcha.';
             return;
@@ -345,7 +331,7 @@ if (window.location.pathname === '/nihongo/') {
             const response = await fetch(`${BASE_URL}/create-user`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
+                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
             });
             const data = await response.json();
             if (response.ok) {
@@ -377,39 +363,10 @@ if (window.location.pathname === '/nihongo/') {
             return;
         }
 
-        // Only get Turnstile token if not in local environment
-        let turnstileResponse = null;
-        if (!isLocalHost()) {
-            const turnstileContainer = document.getElementById('turnstile2');
+        // Get Turnstile token for login
+        const turnstileContainer = document.getElementById('turnstile2');
+        const turnstileResponse = turnstile.getResponse('turnstile2');
 
-            if (!turnstileContainer) {
-                console.error('Turnstile container not found');
-                errorMessage.textContent = 'Captcha container not found. Reload the page.';
-                return;
-            }
-
-            if (!isTurnstileRendered) {
-                // Add Turnstile class and render the captcha only if it hasn't been rendered
-                turnstileContainer.className = 'cf-turnstile';
-
-                try {
-                    turnstile.render('#turnstile2', {
-                        sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX',
-                        callback: (token) => {
-                            console.log('Turnstile Token:', token);
-                            turnstileResponse = token;
-                        },
-                    });
-                    isTurnstileRendered = true; // Set the flag to true after rendering
-                } catch (e) {
-                    console.error('Error rendering Turnstile:', e);
-                    errorMessage.textContent = 'Captcha initialization failed. Reload the page.';
-                    return;
-                }
-            }
-        }
-
-        // Ensure the captcha is completed
         if (!turnstileResponse) {
             errorMessage.textContent = 'Please complete the captcha.';
             return;
@@ -420,7 +377,7 @@ if (window.location.pathname === '/nihongo/') {
             const response = await fetch(`${BASE_URL}/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token only if needed
+                body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
             });
             const data = await response.json();        
             if (response.ok) {
@@ -440,7 +397,6 @@ if (window.location.pathname === '/nihongo/') {
     });
 
 }
-
 
 
 // Fetch and display user subscriptions in the dropdown
