@@ -277,40 +277,48 @@ if (window.location.pathname === '/nihongo/') {
         document.getElementById("login-modal").style.display = "none";
     });
 
-    // Helper function for username validation
-    function validateUsername(username) {
-        const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/; // Allow alphanumeric and underscores with length between 3 and 20
-        return usernameRegex.test(username);
-    }
-
-    // Helper function for password validation
-    function validatePassword(password) {
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // At least 6 characters, must contain letters and numbers
-        return passwordRegex.test(password);
-    }
-
-    // Function to render Turnstile manually and get the response
-    function renderTurnstile(captchaId, callback) {
-        const turnstileContainer = document.getElementById(captchaId);
-        if (!turnstileContainer) {
-            console.error('Turnstile container not found');
-            return;
+    // Helper function to dynamically render Turnstile
+    async function renderTurnstile(containerId, siteKey) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            console.error('Turnstile container not found:', containerId);
+            return false;
         }
+        container.className = 'cf-turnstile';
 
-        // Add Turnstile class to make it visible
-        turnstileContainer.className = 'cf-turnstile';
+        return new Promise((resolve) => {
+            try {
+                turnstile.render(`#${containerId}`, {
+                    sitekey: siteKey,
+                    callback: (token) => {
+                        console.log('Turnstile Token:', token);
+                        resolve(true);
+                    },
+                    'error-callback': () => {
+                        console.error('Captcha failed to load');
+                        resolve(false);
+                    },
+                });
+            } catch (e) {
+                console.error('Error rendering Turnstile:', e);
+                resolve(false);
+            }
+        });
+    }
 
-        // Dynamically render Turnstile widget
-        try {
-            turnstile.render(`#${captchaId}`, {
-                sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX', // Turnstile site key
-                callback: (token) => {
-                    console.log('Turnstile Token:', token);
-                    callback(token); // Call the callback with the token once rendered
-                },
-            });
-        } catch (e) {
-            console.error('Error rendering Turnstile:', e);
+    // Helper function to reset Turnstile
+    function resetTurnstile(containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            turnstile.reset(container);
+        }
+    }
+
+    // Helper function to disable/enable button
+    function toggleButton(buttonId, disable) {
+        const button = document.getElementById(buttonId);
+        if (button) {
+            button.disabled = disable;
         }
     }
 
@@ -320,63 +328,59 @@ if (window.location.pathname === '/nihongo/') {
 
         const username = document.getElementById('signup-username').value.trim();
         const password = document.getElementById('signup-password').value.trim();
-        const errorMessage = document.getElementById('signupErrorMessage'); 
+        const errorMessage = document.getElementById('signupErrorMessage');
+        toggleButton('signup-submit', true);
 
-        // Username validation
-        if (!username) {
-            errorMessage.textContent = 'Username is required.';
+        // Validate input
+        if (!username || !/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+            errorMessage.textContent = 'Invalid username.';
+            toggleButton('signup-submit', false);
             return;
         }
-        if (!validateUsername(username)) {
-            errorMessage.textContent = 'Username must be alphanumeric and between 3 to 20 characters.';
-            return;
-        }
-
-        // Password validation
-        if (!password) {
-            errorMessage.textContent = 'Password is required.';
-            return;
-        }
-        if (!validatePassword(password)) {
-            errorMessage.textContent = 'Password must be at least 6 characters long and contain both letters and numbers.';
+        if (!password || !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(password)) {
+            errorMessage.textContent = 'Invalid password.';
+            toggleButton('signup-submit', false);
             return;
         }
 
-        // Render Turnstile captcha before making the request
-        renderTurnstile('turnstile1', async (turnstileResponse) => {
-            if (!turnstileResponse) {
-                errorMessage.textContent = 'Please complete the captcha.';
-                return;
+        // Render Turnstile if not already rendered
+        if (!(await renderTurnstile('turnstile1', '0x4AAAAAAA1LZ_hIj3lnMBRX'))) {
+            errorMessage.textContent = 'Captcha failed to initialize.';
+            toggleButton('signup-submit', false);
+            return;
+        }
+
+        const turnstileResponse = turnstile.getResponse('turnstile1');
+        if (!turnstileResponse) {
+            errorMessage.textContent = 'Please complete the captcha.';
+            toggleButton('signup-submit', false);
+            return;
+        }
+
+        // Submit signup request
+        try {
+            errorMessage.textContent = 'Creating account, please wait...';
+            const response = await fetch(`${BASE_URL}/create-user`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, turnstileResponse }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(`User created successfully! (${username})`);
+                document.getElementById('signup-modal').style.display = 'none';
+                location.reload();
+            } else {
+                errorMessage.textContent = data.error || 'Something went wrong!';
+                resetTurnstile('turnstile1'); // Reset captcha for retry
             }
-
-            try {
-                errorMessage.textContent = 'Creating Account, Please Wait...';
-                const response = await fetch(`${BASE_URL}/create-user`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    localStorage.setItem('jwt', data.token);
-                    console.log('JWT Token:', data.token);
-                    updateActiveUser();
-                    alert(`User created successfully! (${username})`);
-                    document.getElementById('signup-modal').style.display = 'none';
-                    location.reload();
-                } else {
-                    errorMessage.textContent = data.error || 'Something went wrong!';
-                    // Reset Turnstile captcha
-                    turnstile.reset('turnstile1');
-                    renderTurnstile('turnstile1', () => {}); // Re-render captcha for the next attempt
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Error connecting to the server. Please try again.';
-                turnstile.reset('turnstile1');
-                renderTurnstile('turnstile1', () => {}); // Re-render captcha for the next attempt
-            }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage.textContent = 'Error connecting to the server.';
+            resetTurnstile('turnstile1');
+        }
+        toggleButton('signup-submit', false);
     });
 
     // Login Form Submission
@@ -386,50 +390,55 @@ if (window.location.pathname === '/nihongo/') {
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value.trim();
         const errorMessage = document.getElementById('loginErrorMessage');
+        toggleButton('login-submit', true);
 
         if (!username || !password) {
             errorMessage.textContent = 'Please enter both username and password.';
+            toggleButton('login-submit', false);
             return;
         }
 
-        // Render Turnstile captcha before making the request
-        renderTurnstile('turnstile2', async (turnstileResponse) => {
-            if (!turnstileResponse) {
-                errorMessage.textContent = 'Please complete the captcha.';
-                return;
-            }
+        // Render Turnstile if not already rendered
+        if (!(await renderTurnstile('turnstile2', '0x4AAAAAAA1LZ_hIj3lnMBRX'))) {
+            errorMessage.textContent = 'Captcha failed to initialize.';
+            toggleButton('login-submit', false);
+            return;
+        }
 
-            try {
-                errorMessage.textContent = 'Logging In, Please Wait...';
-                const response = await fetch(`${BASE_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, turnstileResponse }) // Include Turnstile token
-                });
-                const data = await response.json();        
-                if (response.ok) {
-                    localStorage.setItem('jwt', data.token);
-                    console.log('JWT Token:', data.token);
-                    updateActiveUser();
-                    alert(`Welcome back, ${username}!`);
-                    document.getElementById('login-modal').style.display = 'none';
-                    location.reload();
-                } else {
-                    errorMessage.textContent = data.error || 'Invalid username or password.';
-                    // Reset Turnstile captcha
-                    turnstile.reset('turnstile2');
-                    renderTurnstile('turnstile2', () => {}); // Re-render captcha for the next attempt
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Error connecting to the server. Please try again.';
-                turnstile.reset('turnstile2');
-                renderTurnstile('turnstile2', () => {}); // Re-render captcha for the next attempt
+        const turnstileResponse = turnstile.getResponse('turnstile2');
+        if (!turnstileResponse) {
+            errorMessage.textContent = 'Please complete the captcha.';
+            toggleButton('login-submit', false);
+            return;
+        }
+
+        // Submit login request
+        try {
+            errorMessage.textContent = 'Logging in, please wait...';
+            const response = await fetch(`${BASE_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, turnstileResponse }),
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(`Welcome back, ${username}!`);
+                document.getElementById('login-modal').style.display = 'none';
+                location.reload();
+            } else {
+                errorMessage.textContent = data.error || 'Invalid username or password.';
+                resetTurnstile('turnstile2'); // Reset captcha for retry
             }
-        });
+        } catch (error) {
+            console.error('Error:', error);
+            errorMessage.textContent = 'Error connecting to the server.';
+            resetTurnstile('turnstile2');
+        }
+        toggleButton('login-submit', false);
     });
-}
 
+}
 
 // Fetch and display user subscriptions in the dropdown
 async function fetchSubscriptions() {
