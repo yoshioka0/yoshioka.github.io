@@ -289,6 +289,30 @@ if (window.location.pathname === '/nihongo/') {
         return passwordRegex.test(password);
     }
 
+    // Function to render Turnstile manually
+    function renderTurnstile(captchaId) {
+        const turnstileContainer = document.getElementById(captchaId);
+        if (!turnstileContainer) {
+            console.error('Turnstile container not found');
+            return;
+        }
+        
+        // Add Turnstile class to make it visible
+        turnstileContainer.className = 'cf-turnstile';
+
+        // Dynamically render Turnstile widget
+        try {
+            turnstile.render(`#${captchaId}`, {
+                sitekey: '0x4AAAAAAA1LZ_hIj3lnMBRX', // Turnstile site key
+                callback: (token) => {
+                    console.log('Turnstile Token:', token);
+                },
+            });
+        } catch (e) {
+            console.error('Error rendering Turnstile:', e);
+        }
+    }
+
     // New User Creation (Signup)
     document.getElementById('signup-form').addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -317,8 +341,8 @@ if (window.location.pathname === '/nihongo/') {
             return;
         }
 
-        // Get Turnstile token for signup
-        const turnstileContainer = document.getElementById('turnstile1');
+        // Render Turnstile captcha before making the request
+        renderTurnstile('turnstile1');
         const turnstileResponse = turnstile.getResponse('turnstile1');
 
         if (!turnstileResponse) {
@@ -343,10 +367,15 @@ if (window.location.pathname === '/nihongo/') {
                 location.reload();
             } else {
                 errorMessage.textContent = data.error || 'Something went wrong!';
+                // Reset Turnstile captcha
+                turnstile.reset('turnstile1');
+                renderTurnstile('turnstile1'); // Re-render captcha
             }
         } catch (error) {
             console.error('Error:', error);
             errorMessage.textContent = 'Error connecting to the server. Please try again.';
+            turnstile.reset('turnstile1');
+            renderTurnstile('turnstile1'); // Re-render captcha
         }
     });
 
@@ -363,8 +392,8 @@ if (window.location.pathname === '/nihongo/') {
             return;
         }
 
-        // Get Turnstile token for login
-        const turnstileContainer = document.getElementById('turnstile2');
+        // Render Turnstile captcha before making the request
+        renderTurnstile('turnstile2');
         const turnstileResponse = turnstile.getResponse('turnstile2');
 
         if (!turnstileResponse) {
@@ -389,13 +418,17 @@ if (window.location.pathname === '/nihongo/') {
                 location.reload();
             } else {
                 errorMessage.textContent = data.error || 'Invalid username or password.';
+                // Reset Turnstile captcha
+                turnstile.reset('turnstile2');
+                renderTurnstile('turnstile2'); // Re-render captcha
             }
         } catch (error) {
             console.error('Error:', error);
             errorMessage.textContent = 'Error connecting to the server. Please try again.';
+            turnstile.reset('turnstile2');
+            renderTurnstile('turnstile2'); // Re-render captcha
         }
     });
-
 }
 
 
