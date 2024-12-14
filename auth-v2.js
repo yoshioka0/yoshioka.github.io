@@ -84,7 +84,7 @@ function logout() {
         document.getElementById('master').style.filter = 'blur(5px)';
         document.getElementById('master').style.pointerEvents = 'none';
         document.getElementById('activeUser').textContent = 'No user';  
-        document.getElementById('turnstile1').className = 'cf-turnstile';
+      document.getElementById('turnstile1').className = 'cf-turnstile';
         document.getElementById('turnstile2').className = 'cf-turnstile';
     } else {
         window.location.href = '/nihongo/';

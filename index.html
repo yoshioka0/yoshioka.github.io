@@ -12,6 +12,7 @@
   <link rel="manifest" href="favicon/site.webmanifest">
   <link rel="stylesheet" href="styles.css">
    <link rel="stylesheet" href="header-footer/header.css">
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
    <script src="/nihongo/auth-v2.js" defer></script>
   <script src="/nihongo/config.js"></script>
@@ -29,7 +30,11 @@
       <h2>Create a userID</h2>
 	   <form id="signup-form">
 		  <input type="text" id="signup-username" placeholder="Enter username" required>
-		  <input type="password" id="signup-password" placeholder="Enter password" required>
+		
+		<div class="password-wrapper">
+    <input id="signup-password" type="password" placeholder="Password" required />
+    <i id="show-password-icon" class="fas fa-eye"></i> <!-- Eye icon for toggling -->
+</div>
 				
 					<!-- class of the turnstile will be added by auth-v2.js if user unauthicated -->
 					<div id="turnstile1"  data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
@@ -48,12 +53,16 @@
       <h2>Log In</h2>
 	   	<form id="login-form">
 			  <input type="text" id="login-username" placeholder="Enter username" required>
-			  <input type="password" id="login-password" placeholder="Enter password" required>
+			
+<div class="password-wrapper">
+    <input id="login-password" type="password" placeholder="Password" required />
+    <i id="show-password-icon" class="fas fa-eye"></i> <!-- Eye icon for toggling -->
+</div>
 			
 			<!-- class of the turnstile will be added by auth-v2.js if user unauthicated -->
 			<div id="turnstile2"  data-sitekey="0x4AAAAAAA1LZ_hIj3lnMBRX" data-theme="light"></div>
 				
-			  <button type="submit">Log In</button> <br> <br>
+			  <button id="login-button" type="submit">Log In</button> <br> <br>
 			  <p>Don't have an account? <a><span id="signup-here" class="signup-txt">Sign Up</span></a></p>
 			</form>
 			<p id="loginErrorMessage" class="error-message" style="color: red;"></p>
@@ -223,7 +232,8 @@
     }
   </style>
 
-  <script  src="script.js"></script>  
+	<script  src="header-footer/header.js" defer></script> 
+	<script  src="script.js"></script>  
 
 </body>
 </html>

@@ -107,6 +107,37 @@ input:focus {
    color: #fff;
 }
 
+button:disabled {
+    background-color: #ccc; /* Greyed-out for disabled state */
+    cursor: not-allowed;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input[type="password"] {
+    width: 100%;
+    padding-right: 30px; /* Space for the eye icon */
+    padding-left: 10px; /* Optional, for better alignment */
+    font-size: 16px;
+}
+
+#show-password-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
+}
+
+.password-wrapper input[type="password"]:focus + #show-password-icon {
+    color: #007bff; /* Optional: change color when input is focused */
+}
+
 
 .error-message {
   color: red;
